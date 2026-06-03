@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+env/
+.env
+
+# Data (keep example, ignore real)
+backend/data/codes.json
+backend/data/tokens.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

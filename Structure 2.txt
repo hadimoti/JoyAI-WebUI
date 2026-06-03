@@ -1,0 +1,12 @@
+joy-ai/
+├── README.md
+├── .gitignore
+├── frontend/
+│   └── index.html
+└── backend/
+├── hermes_api.py
+├── requirements.txt
+├── config.py
+├── .env.example
+└── data/
+└── approved_emails.json

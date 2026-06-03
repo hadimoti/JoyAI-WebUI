@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="theme-color" content="#0f1117"/>
+<title>Joy AI 🦊</title>
+<style>
+  :root{
+    --bg:#0f1117;--bg2:#161a25;--card:#1c2130;
+    --accent:#ff7a3d;--accent2:#ffb347;
+    --text:#eef1f7;--muted:#8a90a2;
+    --bubble-bot:#232838;--green:#3ddc84;--red:#ff6b6b;
+    --line:#272d3d;--radius:18px;
+    --safe-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg);color:var(--text);overflow:hidden;}
+
+  .app{display:flex;flex-direction:column;height:100dvh;max-width:520px;margin:0 auto;
+    background:var(--bg);position:relative;}
+  @media(min-width:900px){
+    .app{max-width:100%;flex-direction:row;}
+    .sidebar{position:static!important;transform:none!important;width:300px;flex:none;}
+    .overlay{display:none!important;}
+    .hamb{display:none;}
+    .main-col{flex:1;display:flex;flex-direction:column;min-width:0;}
+  }
+  .main-col{display:flex;flex-direction:column;flex:1;min-width:0;height:100%;}
+
+  /* ---------- AUTH SCREENS ---------- */
+  .screen{position:absolute;inset:0;z-index:50;background:radial-gradient(circle at 50% 18%,#1c2130,#0f1117);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px;text-align:center;}
+  .screen.hidden{display:none;}
+  .screen h1{margin:6px 0 0;font-size:25px;}
+  .screen p{color:var(--muted);margin:0;font-size:14px;line-height:1.5;}
+  .screen .persian{direction:rtl;font-family:Tahoma,sans-serif;}
+  .field{width:100%;max-width:340px;padding:14px 16px;border-radius:14px;border:1px solid var(--line);
+    background:var(--card);color:var(--text);font-size:16px;outline:none;text-align:center;}
+  .btn{width:100%;max-width:340px;padding:14px 16px;border-radius:14px;border:none;font-size:16px;
+    font-weight:700;cursor:pointer;}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a1206;}
+  .btn-tg{background:#229ED9;color:#fff;}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--text);font-weight:500;}
+  .btn:active{transform:scale(.97);}
+  .note{font-size:12px;border-radius:12px;padding:10px 14px;max-width:340px;}
+  .note.warn{background:rgba(255,179,71,.12);color:var(--accent2);border:1px solid rgba(255,179,71,.3);}
+  .note.err{background:rgba(255,107,107,.12);color:var(--red);border:1px solid rgba(255,107,107,.3);}
+  .note.ok{background:rgba(61,220,132,.12);color:var(--green);border:1px solid rgba(61,220,132,.3);}
+  .code-box{font-size:22px;letter-spacing:10px;font-weight:700;color:var(--accent2);
+    background:var(--card);padding:14px 20px;border-rad# Joy AI — Complete Project for GitHub
+
+Hi! **Claude 4.8 Opus** here. I've removed Aval AI completely and replaced everything with a **default model** setup. Below is the **entire project** — every file you need, ready to create one-by-one in your GitHub repo.
+
+## 📁 Repository structure

@@ -1,0 +1,721 @@
+---
+
+## 📄 File 2: `.gitignore`
+
+```
+# Python
+__pycache__/
+*.pyc
+.env
+venv/
+env/
+
+# Data (keep example, ignore live)
+backend/data/codes.json
+backend/data/sessions.json
+backend/data/histories/
+
+# OS
+.DS_Store
+Thumbs.db
+```
+
+---
+
+## 📄 File 3: `frontend/index.html`
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="theme-color" content="#0f1117"/>
+<title>Joy AI 🦊</title>
+<style>
+  :root{
+    --bg:#0f1117;--bg2:#161a25;--card:#1c2130;
+    --accent:#ff7a3d;--accent2:#ffb347;
+    --text:#eef1f7;--muted:#8a90a2;
+    --bubble-bot:#232838;--green:#3ddc84;--red:#ff6b6b;
+    --line:#272d3d;--radius:18px;
+    --safe-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg);color:var(--text);overflow:hidden;}
+  .app{display:flex;flex-direction:column;height:100dvh;max-width:520px;margin:0 auto;
+    background:var(--bg);position:relative;}
+  @media(min-width:900px){
+    .app{max-width:100%;flex-direction:row;}
+    .sidebar{position:static!important;transform:none!important;width:300px;flex:none;}
+    .overlay{display:none!important;}
+    .hamb{display:none;}
+    .main-col{flex:1;display:flex;flex-direction:column;min-width:0;}
+  }
+  .main-col{display:flex;flex-direction:column;flex:1;min-width:0;height:100%;}
+  .screen{position:absolute;inset:0;z-index:50;background:radial-gradient(circle at 50% 18%,#1c2130,#0f1117);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px;text-align:center;}
+  .screen.hidden{display:none;}
+  .screen h1{margin:6px 0 0;font-size:25px;}
+  .screen p{color:var(--muted);margin:0;font-size:14px;line-height:1.5;}
+  .screen .persian{direction:rtl;font-family:Tahoma,sans-serif;}
+  .field{width:100%;max-width:340px;# Joy AI — Complete Project (GitHub-Ready File List)
+
+**Claude 4.8 Opus** here. I've removed Aval AI entirely and replaced all model references with a single **`default`** model. Below is the **complete project structure** — create each file exactly as shown.
+
+## Project structure
+
+```
+joy-ai/
+├── frontend/
+│   └── index.html
+├── backend/
+│   ├── hermes_api.py
+│   ├── auth.py
+│   ├── telegram_bot.py
+│   ├── store.py
+│   ├── config.py
+│   ├── requirements.txt
+│   └── .env.example
+├── data/
+│   └── approved_emails.json
+├── .gitignore
+└── README.md
+```
+
+---
+
+## 📄 `frontend/index.html`
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="theme-color" content="#0f1117"/>
+<title>Joy AI 🦊</title>
+<style>
+  :root{
+    --bg:#0f1117;--bg2:#161a25;--card:#1c2130;
+    --accent:#ff7a3d;--accent2:#ffb347;
+    --text:#eef1f7;--muted:#8a90a2;
+    --bubble-bot:#232838;--green:#3ddc84;--red:#ff6b6b;
+    --line:#272d3d;--radius:18px;
+    --safe-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg);color:var(--text);overflow:hidden;}
+  .app{display:flex;flex-direction:column;height:100dvh;max-width:520px;margin:0 auto;background:var(--bg);position:relative;}
+  @media(min-width:900px){
+    .app{max-width:100%;flex-direction:row;}
+    .sidebar{position:static!important;transform:none!important;width:300px;flex:none;}
+    .overlay{display:none!important;}
+    .hamb{display:none;}
+  }
+  .main-col{display:flex;flex-direction:column;flex:1;min-width:0;height:100%;}
+  .screen{position:absolute;inset:0;z-index:50;background:radial-gradient(circle at 50% 18%,#1c2130,#0f1117);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px;text-align:center;}
+  .screen.hidden{display:none;}
+  .screen h1{margin:6px 0 0;font-size:25px;}
+  .screen p{color:var(--muted);margin:0;font-size:14px;line-height:1.5;}
+  .persian{direction:rtl;font-family:Tahoma,sans-serif;}
+  .field{width:100%;max-width:340px;padding:14px 16px;border-radius:14px;border:1px solid var(--line);
+    background:var(--card);color:var(--text);font-size:16px;outline:none;text-align:center;}
+  .btn{width:100%;max-width:340px;padding:14px 16px;border-radius:14px;border:none;font-size:16px;font-weight:700;cursor:pointer;}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a1206;}
+  .btn-tg{background:#229ED9;color:#fff;}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--text);font-weight:500;}
+  .btn:active{transform:scale(.97);}
+  .note{font-size:12px;border-radius:12px;padding:10px 14px;max-width:340px;}
+  .note.warn{background:rgba(255,179,71,.12);color:var(--accent2);border:1px solid rgba(255,179,71,.3);}
+  .note.err{background:rgba(255,107,107,.12);color:var(--red);border:1px solid rgba(255,107,107,.3);}
+  .note.ok{background:rgba(61,220,132,.12);color:var(--green);border:1px solid rgba(61,220,132,.3);}
+  .code-box{font-size:22px;letter-spacing:10px;font-weight:700;color:var(--accent2);
+    background:var(--card);padding:14px 20px;border-radius:14px;border:1px dashed var(--accent);}
+  .fox svg{width:100%;height:100%;transform-origin:50% 80%;animation:wiggle 1.8s ease-in-out infinite;}
+  @keyframes wiggle{0%,100%{transform:rotate(-6deg);}25%{transform:rotate(5deg) translateY(-2px);}50%{transform:rotate(-4deg);}75%{transform:rotate(6deg) translateY(-1px);}}
+  header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg2);
+    border-bottom:1px solid var(--line);position:relative;z-index:10;padding-top:max(12px,env(safe-area-inset-top));}
+  .fox.sm{width:42px;height:42px;flex:none;}
+  .title{flex:1;min-width:0;}
+  .title h2{margin:0;font-size:17px;}
+  .status{font-size:12px;color:var(--green);display:flex;align-items:center;gap:5px;}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+  .hamb{background:none;border:none;color:var(--text);font-size:22px;padding:6px;cursor:pointer;}
+  .model-pick{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:20px;padding:7px 12px;font-size:12px;max-width:130px;outline:none;}
+  .sidebar{position:absolute;top:0;left:0;bottom:0;width:80%;max-width:320px;background:var(--bg2);
+    border-right:1px solid var(--line);transform:translateX(-105%);transition:transform .28s ease;z-index:40;
+    display:flex;flex-direction:column;padding-top:max(0px,env(safe-area-inset-top));}
+  .sidebar.open{transform:translateX(0);}
+  .overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .28s;z-index:35;}
+  .overlay.show{opacity:1;pointer-events:auto;}
+  .side-head{padding:18px 16px;border-bottom:1px solid var(--line);}
+  .who{display:flex;align-items:center;gap:10px;}
+  .avatar{width:40px;height:40px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a1206;background:linear-gradient(135deg,var(--accent),var(--accent2));}
+  .role-badge{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--card);color:var(--accent2);border:1px solid var(--line);}
+  .new-chat{margin:12px 14px;padding:12px;border-radius:12px;border:1px dashed var(--line);background:transparent;color:var(--text);text-align:center;cursor:pointer;}
+  .hist-list{flex:1;overflow-y:auto;padding:0 10px 20px;}
+  .hist-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:14px 8px 6px;}
+  .hist-item{display:flex;flex-direction:column;gap:2px;padding:11px 12px;border-radius:12px;cursor:pointer;margin-bottom:4px;}
+  .hist-item:active,.hist-item.active{background:var(--card);}
+  .hist-item .h-title{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .hist-item .h-time{font-size:11px;color:var(--muted);}
+  .logout{margin:auto 14px 16px;padding:12px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--red);cursor:pointer;}
+  .chat{flex:1;overflow-y:auto;padding:16px 14px 8px;display:flex;flex-direction:column;gap:12px;background:linear-gradient(180deg,var(--bg),var(--bg2));-webkit-overflow-scrolling:touch;}
+  .msg{max-width:82%;padding:11px 14px;border-radius:var(--radius);font-size:15px;line-height:1.45;word-wrap:break-word;animation:rise .25s ease;}
+  @keyframes rise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+  .msg.bot{align-self:flex-start;background:var(--bubble-bot);border-bottom-left-radius:6px;}
+  .msg.me{align-self:flex-end;background:var(--accent);color:#1a1206;border-bottom-right-radius:6px;}
+  .msg .meta{font-size:10px;opacity:.6;margin-top:4px;display:block;}
+  .typing{align-self:flex-start;background:var(--bubble-bot);padding:14px 16px;border-radius:var(--radius);border-bottom-left-radius:6px;display:none;margin:0 14px;}
+  .typing.show{display:flex;gap:5px;}
+  .typing span{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bounce 1.2s infinite;}
+  .typing span:nth-child(2){animation-delay:.2s;}.typing span:nth-child(3){animation-delay:.4s;}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-5px);opacity:1;}}
+  .quick{display:flex;gap:8px;overflow-x:auto;padding:8px 14px;background:var(--bg2);border-top:1px solid var(--line);scrollbar-width:none;}
+  .quick::-webkit-scrollbar{display:none;}
+  .chip{flex:none;padding:8px 14px;border-radius:20px;background:var(--card);border:1px solid var(--line);color:var(--text);font-size:13px;white-space:nowrap;cursor:pointer;}
+  .chip:active{background:var(--accent);color:#1a1206;}
+  .composer{display:flex;gap:8px;align-items:flex-end;padding:10px 12px;padding-bottom:calc(10px + var(--safe-bottom));background:var(--bg2);border-top:1px solid var(--line);}
+  .composer textarea{flex:1;resize:none;max-height:120px;min-height:44px;padding:11px 14px;border-radius:22px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:15px;outline:none;font-family:inherit;}
+  .send{width:44px;height:44px;border-radius:50%;border:none;flex:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a1206;font-size:20px;display:flex;align-items:center;justify-content:center;}
+  .send:active{transform:scale(.9);}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="screen" id="scPick">
+  <div class="fox" style="width:90px;height:90px"><svg viewBox="0 0 100 100" id="foxSVG"></svg></div>
+  <h1>Joy AI</h1>
+  <p>Restaurant ops · Marketing · Content<br/>Select your profile</p>
+  <select class="field" id="userSelect"><option value="" disabled selected>Choose user…</option></select>
+  <button class="btn btn-primary" onclick="goVerifyChoice()">Continue 🦊</button>
+  <p style="font-size:11px;opacity:.5">Access restricted to 4 authorized members</p>
+</div>
+<div class="screen hidden" id="scMethod">
+  <div class="fox" style="width:70px;height:70px"><svg viewBox="0 0 100 100" class="foxClone"></svg></div>
+  <h1>Verify it's you</h1>
+  <p id="methodName">—</p>
+  <button class="btn btn-primary" onclick="startEmail()">✉️ Verify with Gmail</button>
+  <button class="btn btn-tg" onclick="startTelegram()">📨 Verify with Telegram</button>
+  <button class="btn btn-ghost" onclick="show('scPick')">← Back</button>
+</div>
+<div class="screen hidden" id="scEmail">
+  <div class="fox" style="width:60px;height:60px"><svg viewBox="0 0 100 100" class="foxClone"></svg></div>
+  <h1>Gmail verification</h1>
+  <div id="emailStage1">
+    <input class="field" id="emailInput" type="email" placeholder="your@gmail.com"/>
+    <div class="note warn persian" style="margin-top:10px">ایمیل شما باید توسط ادمین تأیید شده باشد</div>
+    <button class="btn btn-primary" style="margin-top:12px" onclick="requestEmail()">Send code</button>
+  </div>
+  <div id="emailStage2" class="hidden">
+    <p>Enter the code sent to your Gmail.</p>
+    <input class="field" id="emailCode" inputmode="numeric" maxlength="6" placeholder="6-digit code"/>
+    <button class="btn btn-primary" style="margin-top:12px" onclick="verifyEmail()">Verify</button>
+  </div>
+  <div id="emailMsg"></div>
+  <button class="btn btn-ghost" onclick="show('scMethod')">← Back</button>
+</div>
+<div class="screen hidden" id="scTg">
+  <div class="fox" style="width:60px;height:60px"><svg viewBox="0 0 100 100" class="foxClone"></svg></div>
+  <h1>Telegram verification</h1>
+  <p>Send this exact message to <b>@differentjoy_bot</b>:</p>
+  <div class="code-box" id="tgCode">······</div>
+  <div class="note warn persian">برای تأیید حساب، این پیام را به هرمس در تلگرام بفرستید</div>
+  <button class="btn btn-tg" onclick="openTgBot()">Open @differentjoy_bot</button>
+  <div id="tgMsg"></div>
+  <button class="btn btn-ghost" onclick="show('scMethod')">← Back</button>
+</div>
+<header>
+  <button class="hamb" onclick="toggleSidebar()">☰</button>
+  <div class="fox sm"><svg viewBox="0 0 100 100" class="foxClone"></svg></div>
+  <div class="title"><h2>Joy AI</h2><div class="status"><span class="dot"></span><span id="hdrUser">online</span></div></div>
+  <select class="model-pick" id="modelPick" title="Model"></select>
+</header>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="side-head"><div class="who"><div class="avatar" id="sbAvatar">?</div><div><div id="sbName" style="font-weight:600">—</div><span class="role-badge" id="sbRole">role</span></div></div></div>
+  <button class="new-chat" onclick="newChat()">＋ New chat</button>
+  <div class="hist-list" id="histList"><div class="hist-label">Recent</div></div>
+  <button class="logout" onclick="logout()">⎋ Log out</button>
+</aside>
+<div class="main-col">
+  <main class="chat" id="chat"></main>
+  <div class="typing" id="typing"><span></span><span></span><span></span></div>
+  <div class="quick" id="quick"></div>
+  <div class="composer">
+    <textarea id="input" rows="1" placeholder="Message Joy AI…"></textarea>
+    <button class="send" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+</div>
+<script>
+const HERMES_API="http://localhost:8000";
+const DEMO_MODE=true;
+const USERS={
+  "persiareborn":{id:"68238523",name:"Hadi",role:"Creator · Admin"},
+  "yoonesbz":{id:"72826135",name:"Yoones",role:"JOY Manager"},
+  "naad_ya":{id:"97638568",name:"Nadia",role:"JOY Manager"},
+  "fatemi9696":{id:"106685881",name:"Zohre",role:"JOY Artist"}
+};
+const BOT_USERNAME="differentjoy_bot";
+const QUICK={
+  "Creator · Admin":["📊 Accounting","📈 Ad ideas","📸 IG post","🤖 Automate","👥 Users"],
+  "JOY Manager":["📊 Report","📈 Ad ideas","📸 IG post","🍕 Menu"],
+  "JOY Artist":["📸 IG post","🎨 Ideas","🖼️ Design brief"]
+};
+const FOX=`<polygon points="20,30 35,10 40,35" fill="#ff7a3d"/><polygon points="80,30 65,10 60,35" fill="#ff7a3d"/><polygon points="20,30 35,18 38,33" fill="#2a1a10"/><polygon points="80,30 65,18 62,33" fill="#2a1a10"/><path d="M25,35 Q50,25 75,35 Q80,65 50,80 Q20,65 25,35 Z" fill="#ff8c4d"/><path d="M35,60 Q50,72 65,60 Q60,80 50,82 Q40,80 35,60 Z" fill="#fff"/><circle cx="40" cy="48" r="4" fill="#2a1a10"/><circle cx="60" cy="48" r="4" fill="#2a1a10"/><circle cx="50" cy="62" r="3.5" fill="#2a1a10"/>`;
+document.getElementById("foxSVG").innerHTML=FOX;
+document.querySelectorAll(".foxClone").forEach(s=>s.innerHTML=FOX);
+let cache=JSON.parse(localStorage.getItem("joy_cache")||"{}");
+if(!cache.users)cache.users={};
+if(!cache.models)cache.models=null;
+function saveCache(){localStorage.setItem("joy_cache",JSON.stringify(cache));}
+let currentUser=null,pendingUser=null,activeChat=0,activeModel=null,tgPoll=null;
+const sel=document.getElementById("userSelect");
+Object.entries(USERS).forEach(([u,i])=>{const o=document.createElement("option");o.value=u;o.textContent=`${i.name} (@${u}) — ${i.role}`;sel.appendChild(o);});
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden"));if(id)document.getElementById(id).classList.remove("hidden");}
+function goVerifyChoice(){const u=sel.value;if(!u){alert("Select your profile");return;}pendingUser=u;if(cache.users[u]&&cache.users[u].verified){enterApp(u);return;}document.getElementById("methodName").textContent=`${USERS[u].name} (@${u}) · ${USERS[u].role}`;show("scMethod");}
+function startEmail(){show("scEmail");document.getElementById("emailStage1").classList.remove("hidden");document.getElementById("emailStage2").classList.add("hidden");document.getElementById("emailMsg").innerHTML="";}
+async function requestEmail(){const email=document.getElementById("emailInput").value.trim();const msg=document.getElementById("emailMsg");if(!email){msg.innerHTML=`<div class="note err">Enter your email</div>`;return;}msg.innerHTML=`<div class="note warn">Checking with admin…</div>`;
+  if(DEMO_MODE){setTimeout(()=>{msg.innerHTML=`<div class="note ok">Code sent! (DEMO: use 123456)</div>`;document.getElementById("emailStage1").classList.add("hidden");document.getElementById("emailStage2").classList.remove("hidden");},700);return;}
+  try{const r=await fetch(`${HERMES_API}/auth/email/request`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({user:pendingUser,email})});const d=await r.json();if(d.approved){msg.innerHTML=`<div class="note ok">Code sent to your Gmail.</div>`;document.getElementById("emailStage1").classList.add("hidden");document.getElementById("emailStage2").classList.remove("hidden");}else{msg.innerHTML=`<div class="note err persian">ایمیل شما باید توسط ادمین تأیید شده باشد</div>`;}}catch(e){msg.innerHTML=`<div class="note err">Connection error. Is Hermes running?</div>`;}}
+async function verifyEmail(){const code=document.getElementById("emailCode").value.trim();const msg=document.getElementById("emailMsg");if(DEMO_MODE){if(code==="123456"){onVerified("email");}else msg.innerHTML=`<div class="note err">Wrong code (DEMO: 123456)</div>`;return;}
+  try{const r=await fetch(`${HERMES_API}/auth/email/verify`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({user:pendingUser,code})});const d=await r.json();if(d.ok){onVerified("email",d.token);}else msg.innerHTML=`<div class="note err">Invalid code</div>`;}catch(e){msg.innerHTML=`<div class="note err">Connection error</div>`;}}
+async function startTelegram(){show("scTg");const box=document.getElementById("tgCode");const msg=document.getElementById("tgMsg");msg.innerHTML=`<div class="note warn">Generating your code…</div>`;let code;
+  if(DEMO_MODE){code="JOY-"+Math.floor(1000+Math.random()*9000);}else{try{const r=await fetch(`${HERMES_API}/auth/telegram/code`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({user:pendingUser})});code=(await r.json()).code;}catch(e){msg.innerHTML=`<div class="note err">Connection error</div>`;return;}}
+  box.textContent=code;msg.innerHTML=`<div class="note warn">Waiting for your message to the bot…</div>`;
+  tgPoll=setInterval(async()=>{if(DEMO_MODE){clearInterval(tgPoll);onVerified("telegram");return;}try{const r=await fetch(`${HERMES_API}/auth/telegram/check?user=${pendingUser}&code=${code}`);const d=await r.json();if(d.ok){clearInterval(tgPoll);onVerified("telegram",d.token);}}catch(e){}},2500);}
+function openTgBot(){window.open(`https://t.me/${BOT_USERNAME}`,"_blank");}
+function onVerified(method,token){const u=pendingUser;cache.users[u]=cache.users[u]||{chats:[]};cache.users[u].verified=true;cache.users[u].method=method;cache.users[u].token=token||("demo-"+u);saveCache();enterApp(u);}
+async function enterApp(u){if(tgPoll)clearInterval(tgPoll);currentUser=u;const info=USERS[u];show(null);document.getElementById("hdrUser").textContent=info.name+" · online";document.getElementById("sbName").textContent=info.name+"  (@"+u+")";document.getElementById("sbRole").textContent=info.role;document.getElementById("sbAvatar").textContent=info.name[0];buildQuick(info.role);await loadModels();if(!cache.users[u].chats)cache.users[u].chats=[];renderHistory();if(cache.users[u].chats.length===0)newChat(true);else loadChat(cache.users[u].chats.length-1);}
+function logout(){if(tgPoll)clearInterval(tgPoll);currentUser=null;sel.value="";toggleSidebar(true);show("scPick");}
+async function loadModels(){const pick=document.getElementById("modelPick");let models=cache.models;
+  if(!models){if(DEMO_MODE){models=[{id:"default",name:"Default"}];}else{try{const r=await fetch(`${HERMES_API}/models`);models=(await r.json()).models;}catch(e){models=[{id:"default",name:"Default"}];}}cache.models=models;saveCache();}
+  pick.innerHTML="";models.forEach(m=>{const o=document.createElement("option");o.value=m.id;o.textContent=m.name;pick.appendChild(o);});activeModel=cache.users[currentUser].model||models[0].id;pick.value=activeModel;pick.onchange=()=>{activeModel=pick.value;cache.users[currentUser].model=activeModel;saveCache();};}
+function buildQuick(role){const q=document.getElementById("quick");q.innerHTML="";(QUICK[role]||[]).forEach(t=>{const c=document.createElement("div");c.className="chip";c.textContent=t;c.onclick=()=>{document.getElementById("input").value=t.replace(/^\S+\s/,"");sendMsg();};q.appendChild(c);});}
+function newChat(silent){const u=currentUser;cache.users[u].chats.push({title:"New chat",time:Date.now(),msgs:[]});activeChat=cache.users[u].chats.length-1;saveCache();renderHistory();renderChat();if(!silent)toggleSidebar(true);setTimeout(()=>botSay(`Hey ${USERS[u].name}! 🦊 I'm Joy AI. Accounting, ads, IG posts or content automation?`),300);}
+function loadChat(i){activeChat=i;renderChat();renderHistory();toggleSidebar(true);}
+function renderHistory(){const list=document.getElementById("histList");list.innerHTML='<div class="hist-label">Recent</div>';const chats=cache.users[currentUser].chats;chats.slice().reverse().forEach((c,idx)=>{const real=chats.length-1-idx;const it=document.createElement("div");it.className="hist-item"+(real===activeChat?" active":"");it.innerHTML=`<span class="h-title">${c.title}</span><span class="h-time">${new Date(c.time).toLocaleString()}</span>`;it.onclick=()=>loadChat(real);list.appendChild(it);});}
+function renderChat(){const chat=document.getElementById("chat");chat.innerHTML="";cache.users[currentUser].chats[activeChat].msgs.forEach(m=>addBubble(m.role,m.text,m.t,false));scrollDown();}
+function addBubble(role,text,t,store=true){const chat=document.getElementById("chat");const div=document.createElement("div");div.className="msg "+(role==="me"?"me":"bot");const time=new Date(t||Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});div.innerHTML=`${text}<span class="meta">${role==="me"?USERS[currentUser].name:"Joy"} · ${time}</span>`;chat.appendChild(div);scrollDown();if(store){const c=cache.users[currentUser].chats[activeChat];c.msgs.push({role,text,t:Date.now()});if(c.title==="New chat"&&role==="me")c.title=text.slice(0,28);saveCache();renderHistory();}}
+function scrollDown(){const c=document.getElementById("chat");c.scrollTop=c.scrollHeight;}
+function botSay(t){addBubble("bot",t);}
+function showTyping(on){const t=document.getElementById("typing");t.classList.toggle("show",on);if(on){document.getElementById("chat").appendChild(t);scrollDown();}}
+async function sendMsg(){const inp=document.getElementById("input");const txt=inp.value.trim();if(!txt)return;addBubble("me",txt);inp.value="";inp.style.height="44px";showTyping(true);
+  if(DEMO_MODE){setTimeout(()=>{showTyping(false);botSay(demoReply(txt));},900);return;}
+  try{const r=await fetch(`${HERMES_API}/chat`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({user:currentUser,token:cache.users[currentUser].token,model:activeModel,message:txt,history:cache.users[currentUser].chats[activeChat].msgs})});const d=await r.json();showTyping(false);botSay(d.reply||"…");}catch(e){showTyping(false);botSay("⚠️ Couldn't reach Hermes. Check the PC.");}}
+function demoReply(q){q=q.toLowerCase();if(q.includes("account"))return"📊 Connect Hermes to show live restaurant ledger.";if(q.includes("ad"))return"📈 Ad idea: 'Fox-fresh Fridays 🦊🍕' — want a reel script?";if(q.includes("ig")||q.includes("post"))return"📸 IG caption ready + hashtags. Want an image brief?";if(q.includes("menu"))return"🍕 Menu sheet: Pizza, Salad, Appetizers, Drinks (prices empty).";return"Got it 🦊 (demo reply — set DEMO_MODE=false to go live).";}
+function toggleSidebar(forceClose){const sb=document.getElementById("sidebar"),ov=document.getElementById("overlay");if(forceClose){sb.classList.remove("open");ov.classList.remove("show");return;}sb.classList.toggle("open");ov.classList.toggle("show");}
+const inp=document.getElementById("input");
+inp.addEventListener("input",()=>{inp.style.height="44px";inp.style.height=Math.min(inp.scrollHeight,120)+"px";});
+inp.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMsg();}});
+</script>
+</body>
+</html>
+```
+
+---
+
+## 📄 `backend/config.py`
+
+```python
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# --- Server ---
+HOST = os.getenv("HOST", "0.0.0.0")
+PORT = int(os.getenv("PORT", "8000"))
+
+# --- Telegram ---
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8253585727:PUT-YOUR-TOKEN-HERE")
+BOT_ID = "8253585727"
+BOT_USERNAME = "differentjoy_bot"
+
+# --- Admin ---
+ADMIN_USER = "persiareborn"
+ADMIN_TELEGRAM_ID = "68238523"
+
+# --- Email (Gmail SMTP) ---
+SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+SMTP_USER = os.getenv("SMTP_USER", "")          # your gmail
+SMTP_PASS = os.getenv("SMTP_PASS", "")          # gmail App Password (16 chars)
+
+# --- Default model (only one model used) ---
+DEFAULT_MODEL = "default"
+AVAILABLE_MODELS = [{"id": "default", "name": "Default"}]
+
+# --- Known users (username -> info) ---
+USERS = {
+    "persiareborn": {"id": "68238523",  "name": "Hadi",   "role": "Creator · Admin"},
+    "yoonesbz":   {"id": "72826135",  "name": "Yoones", "role": "JOY Manager"},
+    "naad_ya":    {"id": "97638568",  "name": "Nadia",  "role": "JOY Manager"},
+    "fatemi9696": {"id": "106685881", "name": "Zohre",  "role": "JOY Artist"},
+}
+
+# --- Paths ---
+DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+APPROVED_EMAILS_FILE = os.path.join(DATA_DIR, "approved_emails.json")
+```
+
+---
+
+## 📄 `backend/store.py`
+
+```python
+"""Simple JSON-file based storage for approved emails, codes, and tokens."""
+import json, os, secrets, time
+from config import APPROVED_EMAILS_FILE, DATA_DIR
+
+os.makedirs(DATA_DIR, exist_ok=True)
+
+# In-memory stores (reset on restart — fine for verification codes)
+email_codes = {}      # user -> {"code": "123456", "email": "..", "exp": ts}
+telegram_codes = {}   # user -> {"code": "JOY-1234", "verified": False}
+tokens = {}           # token -> user
+
+def load_approved_emails():
+    if not os.path.exists(APPROVED_EMAILS_FILE):
+        return {}
+    with open(APPROVED_EMAILS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_approved_emails(data):
+    with open(APPROVED_EMAILS_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def is_email_approved(user, email):
+    approved = load_approved_emails()
+    return approved.get(user, "").lower() == email.lower()
+
+def approve_email(user, email):
+    approved = load_approved_emails()
+    approved[user] = email
+    save_approved_emails(approved)
+
+def new_token(user):
+    t = secrets.token_urlsafe(24)
+    tokens[t] = user
+    return t
+
+def gen_email_code():
+    return f"{secrets.randbelow(900000) + 100000}"
+
+def gen_telegram_code():
+    return f"JOY-{secrets.randbelow(9000) + 1000}"
+```
+
+---
+
+## 📄 `backend/auth.py`
+
+```python
+"""Email + Telegram verification logic."""
+import smtplib, time
+from email.mime.text import MIMEText
+from config import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
+import store
+
+CODE_TTL = 300  # seconds
+
+def send_email_code(email, code):
+    """Send the 6-digit code via Gmail SMTP."""
+    if not SMTP_USER or not SMTP_PASS:
+        print(f"[DEV] Email code for {email}: {code}")  # fallback if SMTP not set
+        return True
+    body = f"Your Joy AI verification code is: {code}\n\nIt expires in 5 minutes."
+    msg = MIMEText(body)
+    msg["Subject"] = "Joy AI verification code 🦊"
+    msg["From"] = SMTP_USER
+    msg["To"] = email
+    try:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as s:
+            s.starttls()
+            s.login(SMTP_USER, SMTP_PASS)
+            s.send_message(msg)
+        return True
+    except Exception as e:
+        print("SMTP error:", e)
+        return False
+
+def request_email(user, email):
+    if not store.is_email_approved(user, email):
+        return {"approved": False}
+    code = store.gen_email_code()
+    store.email_codes[user] = {"code": code, "email": email, "exp": time.time() + CODE_TTL}
+    send_email_code(email, code)
+    return {"approved": True}
+
+def verify_email(user, code):
+    rec = store.email_codes.get(user)
+    if not rec or rec["exp"] < time.time():
+        return {"ok": False}
+    if rec["code"] == code:
+        del store.email_codes[user]
+        return {"ok": True, "token": store.new_token(user)}
+    return {"ok": False}
+
+def request_telegram_code(user):
+    code = store.gen_telegram_code()
+    store.telegram_codes[user] = {"code": code, "verified": False}
+    return {"code": code}
+
+def check_telegram(user, code):
+    rec = store.telegram_codes.get(user)
+    if rec and rec["code"] == code and rec["verified"]:
+        return {"ok": True, "token": store.new_token(user)}
+    return {"ok": False}
+```
+
+---
+
+## 📄 `backend/telegram_bot.py`
+
+```python
+"""Telegram bot: catches verification codes users send to @differentjoy_bot.
+Also handles /model command. Runs in a background thread."""
+import threading, requests, time
+from config import BOT_TOKEN, USERS, AVAILABLE_MODELS
+import store
+
+API = f"https://api.telegram.org/bot{BOT_TOKEN}"
+
+def _username_from_tg(tg_user):
+    uname = (tg_user.get("username") or "").lower()
+    return uname if uname in USERS else None
+
+def _send(chat_id, text):
+    try:
+        requests.post(f"{API}/sendMessage", json={"chat_id": chat_id, "text": text}, timeout=10)
+    except Exception as e:
+        print("send error:", e)
+
+def _handle_message(msg):
+    text = (msg.get("text") or "").strip()
+    chat_id = msg["chat"]["id"]
+    user = _username_from_tg(msg.get("from", {}))
+
+    # /model command -> list default model
+    if text.startswith("/model"):
+        names = ", ".join(m["name"] for m in AVAILABLE_MODELS)
+        _send(chat_id, f"Available model(s): {names}")
+        return
+
+    # verification code (matches JOY-XXXX)
+    if user and text.startswith("JOY-"):
+        rec = store.telegram_codes.get(user)
+        if rec and rec["code"] == text:
+            rec["verified"] = True
+            _send(chat_id, "✅ Account verified! Return to Joy AI in your browser. 🦊")
+        else:
+            _send(chat_id, "⚠️ Code not found or expired. Generate a new one in the WebUI.")
+        return
+
+    _send(chat_id, "Hi! 🦊 Send your JOY-XXXX code to verify, or /model to list models.")
+
+def _poll_loop():
+    offset = None
+    while True:
+        try:
+            params = {"timeout": 30}
+            if offset:
+                params["offset"] = offset
+            r = requests.get(f"{API}/getUpdates", params=params, timeout=40)
+            for upd in r.json().get("result", []):
+                offset = upd["update_id"] + 1
+                if "message" in upd:
+                    _handle_message(upd["message"])
+        except Exception as e:
+            print("poll error:", e)
+            time.sleep(3)
+
+def start_bot():
+    threading.Thread(target=_poll_loop, daemon=True).start()
+    print("Telegram bot polling started.")
+```
+
+---
+
+## 📄 `backend/hermes_api.py`
+
+```python
+"""Main FastAPI server for Joy AI. Run:  python hermes_api.py"""
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import uvicorn
+
+from config import HOST, PORT, AVAILABLE_MODELS, DEFAULT_MODEL
+import auth, store
+from telegram_bot import start_bot
+
+app = FastAPI(title="Joy AI Hermes API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],          # tighten to your WebUI origin in production
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ---------- AUTH: EMAIL ----------
+@app.post("/auth/email/request")
+async def email_request(req: Request):
+    d = await req.json()
+    return auth.request_email(d["user"], d["email"])
+
+@app.post("/auth/email/verify")
+async def email_verify(req: Request):
+    d = await req.json()
+    return auth.verify_email(d["user"], d["code"])
+
+# ---------- AUTH: TELEGRAM ----------
+@app.post("/auth/telegram/code")
+async def tg_code(req: Request):
+    d = await req.json()
+    return auth.request_telegram_code(d["user"])
+
+@app.get("/auth/telegram/check")
+async def tg_check(user: str, code: str):
+    return auth.check_telegram(user, code)
+
+# ---------- MODELS (cli: hermes model / telegram: /model) ----------
+@app.get("/models")
+async def models():
+    return {"models": AVAILABLE_MODELS}
+
+# ---------- CHAT (uses default model) ----------
+@app.post("/chat")
+async def chat(req: Request):
+    d = await req.json()
+    token = d.get("token")
+    if token not in store.tokens:
+        return JSONResponse({"reply": "⚠️ Session expired. Please log in again."}, status_code=401)
+
+    message = d.get("message", "")
+    model = d.get("model", DEFAULT_MODEL)   # always 'default'
+    history = d.get("history", [])
+
+    # === TODO: plug your Hermes default-model logic here ===
+    reply = run_default_model(message, history)
+    return {"reply": reply}
+
+def run_default_model(message: str, history: list) -> str:
+    """Replace this with your actual Hermes default-model call."""
+    return f"[default model] You said: {message}"
+
+if __name__ == "__main__":
+    start_bot()                       # start Telegram polling
+    uvicorn.run(app, host=HOST, port=PORT)
+```
+
+---
+
+## 📄 `backend/requirements.txt`
+
+```
+fastapi==0.115.0
+uvicorn==0.32.0
+requests==2.32.3
+python-dotenv==1.0.1
+```
+
+---
+
+## 📄 `backend/.env.example`
+
+```
+HOST=0.0.0.0
+PORT=8000
+BOT_TOKEN=8253585727:PUT-YOUR-TOKEN-HERE
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=youremail@gmail.com
+SMTP_PASS=your16charAppPassword
+```
+
+---
+
+## 📄 `data/approved_emails.json`
+
+```json
+{
+  "persiareborn": "hadi@gmail.com",
+  "yoonesbz": "yoones@gmail.com",
+  "naad_ya": "nadia@gmail.com",
+  "fatemi9696": "zohre@gmail.com"
+}
+```
+
+---
+
+## 📄 `.gitignore`
+
+```
+__pycache__/
+*.pyc
+.env
+.venv/
+venv/
+data/tokens.json
+.DS_Store
+```
+
+---
+
+## 📄 `README.md`
+
+````markdown
+# Joy AI 🦊
+
+Responsive phone WebUI + Hermes backend. Gmail/Telegram verification, single **default** model, per-user cached histories.
+
+## Members
+| Name | Username | Role |
+|------|----------|------|
+| Hadi | @PersiaReborn | Creator · Admin |
+| Yoones | @yoonesbz | JOY Manager |
+| Nadia | @naad_ya | JOY Manager |
+| Zohre | @fatemi9696 | JOY Artist |
+
+## Quick start
+
+### Frontend (test now, demo mode)
+Open `frontend/index.html` in your browser.
+- Gmail code in demo: `123456`
+- Telegram: auto-confirms in demo
+
+### Backend (go live)
+```bash
+cd backend
+pip install -r requirements.txt
+cp .env.example .env      # fill BOT_TOKEN + Gmail SMTP
+python hermes_api.py
+```
+Then in `frontend/index.html` set:
+```js
+const DEMO_MODE = false;
+const HERMES_API = "http://YOUR-PC-IP:8000";
+```
+
+## Auth flow
+1. Pick name → choose **Gmail** or **Telegram**.
+2. **Gmail**: email must be admin-approved (`data/approved_emails.json`) → 6-digit code sent.
+3. **Telegram**: shows `JOY-XXXX` code → send it to `@differentjoy_bot` → auto-verified (no admin step).
+4. Verified users are cached → skip straight to chat next time.
+
+## Models
+- WebUI dropdown, CLI: `hermes model`, Telegram: `/model` → all return **default**.
+- Models fetched once then cached with user + histories.
+
+## Plug your AI
+Edit `run_default_model()` in `backend/hermes_api.py`.

@@ -1,0 +1,36 @@
+---
+
+## 📄 File 1: `README.md`
+
+````markdown
+# 🦊 Joy AI
+
+Responsive phone/desktop WebUI for the Hermes Agent — restaurant ops, marketing, IG posts & content automation.
+
+## Features
+- 4 authorized users with role-based access
+- Gmail verification (admin-approved emails) **or** Telegram verification
+- Model filter (default model preconfigured)
+- localStorage caching: user / models / histories
+- Dark-grey + orange theme, animated fox 🦊
+- Fully responsive (phone → tablet → desktop)
+
+## Users
+| Name | Username | ID | Role |
+|------|----------|----|------|
+| Hadi | @PersiaReborn | 68238523 | Creator · Admin |
+| Yoones | @yoonesbz | 72826135 | JOY Manager |
+| Nadia | @naad_ya | 97638568 | JOY Manager |
+| Zohre | @fatemi9696 | 106685881 | JOY Artist |
+
+## Quick start
+
+### Frontend
+Open `frontend/index.html` in a browser. Set `DEMO_MODE=true` to test without backend.
+
+### Backend
+```bash
+cd backend
+pip install -r requirements.txt
+cp .env.example .env   # fill in your values
+python hermes_api.py
