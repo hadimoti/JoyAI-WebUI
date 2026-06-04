@@ -6,7 +6,7 @@ Responsive phone WebUI + Hermes backend. Gmail/Telegram verification, single **d
 
 | Name   | Username      | Role            |
 |--------|---------------|-----------------|
-| Hadi   | @hadimoti     | Creator · Admin |
+| Hadi   | @persiareborn | Creator · Admin |
 | Yoones | @yoonesbz     | JOY Manager     |
 | Nadia  | @naad_ya      | JOY Manager     |
 | Zohre  | @fatemi9696   | JOY Artist      |
