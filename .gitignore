@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.env
+.venv/
+venv/
+env/
+
+# Data (keep example, ignore live)
+backend/data/codes.json
+backend/data/tokens.json
+backend/data/sessions.json
+backend/data/histories/
+data/tokens.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

@@ -1,0 +1,125 @@
+"""Main FastAPI server for Joy AI.
+
+Run:  python hermes_api.py
+"""
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from openai import OpenAI
+import uvicorn
+
+from config import (
+    HOST, PORT, AVAILABLE_MODELS, DEFAULT_MODEL,
+    NVIDIA_API_KEY, AVAL_API_KEY,
+    NVIDIA_BASE_URL, AVAL_BASE_URL,
+)
+import auth, store
+from telegram_bot import start_bot
+
+app = FastAPI(title="Joy AI — Hermes API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# --- Provider clients (lazy init) ---
+_nvidia_client: OpenAI | None = None
+_aval_client:   OpenAI | None = None
+
+def _get_client(provider: str) -> OpenAI:
+    global _nvidia_client, _aval_client
+    if provider == "nvidia":
+        if not _nvidia_client:
+            _nvidia_client = OpenAI(api_key=NVIDIA_API_KEY, base_url=NVIDIA_BASE_URL)
+        return _nvidia_client
+    else:  # aval
+        if not _aval_client:
+            _aval_client = OpenAI(api_key=AVAL_API_KEY, base_url=AVAL_BASE_URL)
+        return _aval_client
+
+def _model_info(model_id: str) -> dict:
+    """Return the model dict from AVAILABLE_MODELS, falling back to defaults."""
+    for m in AVAILABLE_MODELS:
+        if m["id"] == model_id:
+            return m
+    return AVAILABLE_MODELS[0]
+
+# ---------- AUTH: EMAIL ----------
+@app.post("/auth/email/request")
+async def email_request(req: Request):
+    d = await req.json()
+    return auth.request_email(d["user"], d["email"])
+
+@app.post("/auth/email/verify")
+async def email_verify(req: Request):
+    d = await req.json()
+    return auth.verify_email(d["user"], d["code"])
+
+# ---------- AUTH: TELEGRAM ----------
+@app.post("/auth/telegram/code")
+async def tg_code(req: Request):
+    d = await req.json()
+    return auth.request_telegram_code(d["user"])
+
+@app.get("/auth/telegram/check")
+async def tg_check(user: str, code: str):
+    return auth.check_telegram(user, code)
+
+# ---------- MODELS ----------
+@app.get("/models")
+async def models():
+    """Return all available models for the UI dropdown."""
+    return {"models": [{"id": m["id"], "name": m["name"]} for m in AVAILABLE_MODELS]}
+
+# ---------- CHAT ----------
+@app.post("/chat")
+async def chat(req: Request):
+    d = await req.json()
+
+    token = d.get("token")
+    if token not in store.tokens:
+        return JSONResponse({"reply": "⚠️ Session expired. Please log in again."}, status_code=401)
+
+    message = d.get("message", "")
+    model   = d.get("model", DEFAULT_MODEL)
+    history = d.get("history", [])
+
+    try:
+        reply = call_model(model, message, history)
+    except Exception as e:
+        reply = f"⚠️ Model error: {e}"
+
+    return {"reply": reply}
+
+def call_model(model_id: str, message: str, history: list) -> str:
+    """Route to the correct provider and call the model."""
+    info   = _model_info(model_id)
+    client = _get_client(info["provider"])
+
+    # Build messages list from history + new message
+    messages = [{"role": "system", "content": (
+        "You are Joy AI, an assistant for a restaurant team. "
+        "Help with operations, marketing, Instagram content, and automation. "
+        "Be concise and practical."
+    )}]
+
+    for h in history[-20:]:   # last 20 turns for context
+        role = "user" if h.get("role") == "me" else "assistant"
+        messages.append({"role": role, "content": h.get("text", "")})
+
+    messages.append({"role": "user", "content": message})
+
+    response = client.chat.completions.create(
+        model=model_id,
+        messages=messages,
+        max_tokens=1024,
+        temperature=0.7,
+    )
+    return response.choices[0].message.content
+
+if __name__ == "__main__":
+    start_bot()
+    uvicorn.run(app, host=HOST, port=PORT)
