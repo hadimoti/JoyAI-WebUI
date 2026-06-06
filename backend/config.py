@@ -20,27 +20,17 @@ SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USER = os.getenv("SMTP_USER", "")
 SMTP_PASS = os.getenv("SMTP_PASS", "")
 
-# --- API Keys ---
-NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY", "")
-AVAL_API_KEY   = os.getenv("AVAL_API_KEY", "")
+# --- Hermes API server (local gateway) ---
+HERMES_API_URL = os.getenv("HERMES_API_URL", "http://127.0.0.1:8642/v1")
+HERMES_API_KEY = os.getenv("HERMES_API_KEY", "")
 
-# --- Provider base URLs ---
-NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
-AVAL_BASE_URL   = "https://api.avalai.ir/v1"
-
-# --- Available models (shown in UI dropdown) ---
-# Format: {"id": "<model-id>", "name": "<display name>", "provider": "nvidia"|"aval"}
+# --- Available models (routed through Hermes → AvalAI) ---
 AVAILABLE_MODELS = [
-    # NVIDIA NIM
-    {"id": "meta/llama-3.1-70b-instruct",         "name": "Llama 3.1 70B (NVIDIA)",    "provider": "nvidia"},
-    {"id": "meta/llama-3.1-8b-instruct",          "name": "Llama 3.1 8B (NVIDIA)",     "provider": "nvidia"},
-    {"id": "mistralai/mistral-7b-instruct-v0.3",  "name": "Mistral 7B (NVIDIA)",       "provider": "nvidia"},
-    {"id": "nvidia/nemotron-4-340b-instruct",      "name": "Nemotron 340B (NVIDIA)",    "provider": "nvidia"},
-    # Aval AI
-    {"id": "gpt-4o",                              "name": "GPT-4o (Aval)",             "provider": "aval"},
-    {"id": "gpt-4o-mini",                         "name": "GPT-4o Mini (Aval)",        "provider": "aval"},
-    {"id": "claude-3-5-sonnet-20241022",          "name": "Claude 3.5 Sonnet (Aval)",  "provider": "aval"},
-    {"id": "claude-3-haiku-20240307",             "name": "Claude 3 Haiku (Aval)",     "provider": "aval"},
+    {"id": "deepseek-v4-pro",              "name": "Joy AI Pro"},
+    {"id": "deepseek-v4-flash",            "name": "Joy AI Flash"},
+    {"id": "claude-sonnet-4-6",            "name": "Claude Sonnet"},
+    {"id": "gemini-3.1-flash-lite-preview","name": "Gemini Flash Lite"},
+    {"id": "qwen3.6-flash",               "name": "Qwen Flash (Persian)"},
 ]
 
 DEFAULT_MODEL = AVAILABLE_MODELS[0]["id"]

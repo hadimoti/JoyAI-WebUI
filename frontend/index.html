@@ -748,7 +748,7 @@ async function loadModels() {
     try {
       const r = await fetch(`${HERMES_API}/models`);
       models = (await r.json()).models;
-    } catch(e) { models = [{id:"default", name:"Offline"}]; }
+    } catch(e) { models = [{id:"deepseek-v4-pro", name:"Joy AI Pro"}]; }
   }
   pick.innerHTML = "";
   models.forEach(m => {

@@ -1,5 +1,7 @@
 """Main FastAPI server for Joy AI.
 
+Routes all AI calls through the local Hermes gateway (OpenAI-compatible API server).
+
 Run:  python hermes_api.py
 """
 from fastapi import FastAPI, Request
@@ -9,14 +11,14 @@ from openai import OpenAI
 import uvicorn
 
 from config import (
-    HOST, PORT, AVAILABLE_MODELS, DEFAULT_MODEL,
-    NVIDIA_API_KEY, AVAL_API_KEY,
-    NVIDIA_BASE_URL, AVAL_BASE_URL,
+    HOST, PORT,
+    AVAILABLE_MODELS, DEFAULT_MODEL,
+    HERMES_API_URL, HERMES_API_KEY,
 )
 import auth, store
 from telegram_bot import start_bot
 
-app = FastAPI(title="Joy AI — Hermes API")
+app = FastAPI(title="Joy AI — Hermes Gateway")
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,27 +27,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Provider clients (lazy init) ---
-_nvidia_client: OpenAI | None = None
-_aval_client:   OpenAI | None = None
+# Single client pointing at local Hermes API server
+_hermes_client: OpenAI | None = None
 
-def _get_client(provider: str) -> OpenAI:
-    global _nvidia_client, _aval_client
-    if provider == "nvidia":
-        if not _nvidia_client:
-            _nvidia_client = OpenAI(api_key=NVIDIA_API_KEY, base_url=NVIDIA_BASE_URL)
-        return _nvidia_client
-    else:  # aval
-        if not _aval_client:
-            _aval_client = OpenAI(api_key=AVAL_API_KEY, base_url=AVAL_BASE_URL)
-        return _aval_client
+def _get_client() -> OpenAI:
+    global _hermes_client
+    if not _hermes_client:
+        _hermes_client = OpenAI(
+            api_key=HERMES_API_KEY,
+            base_url=HERMES_API_URL,
+        )
+    return _hermes_client
 
-def _model_info(model_id: str) -> dict:
-    """Return the model dict from AVAILABLE_MODELS, falling back to defaults."""
-    for m in AVAILABLE_MODELS:
-        if m["id"] == model_id:
-            return m
-    return AVAILABLE_MODELS[0]
 
 # ---------- AUTH: EMAIL ----------
 @app.post("/auth/email/request")
@@ -74,6 +67,11 @@ async def models():
     """Return all available models for the UI dropdown."""
     return {"models": [{"id": m["id"], "name": m["name"]} for m in AVAILABLE_MODELS]}
 
+# ---------- HEALTH ----------
+@app.get("/health")
+async def health():
+    return {"status": "ok", "gateway": HERMES_API_URL}
+
 # ---------- CHAT ----------
 @app.post("/chat")
 async def chat(req: Request):
@@ -94,19 +92,18 @@ async def chat(req: Request):
 
     return {"reply": reply}
 
-def call_model(model_id: str, message: str, history: list) -> str:
-    """Route to the correct provider and call the model."""
-    info   = _model_info(model_id)
-    client = _get_client(info["provider"])
 
-    # Build messages list from history + new message
+def call_model(model_id: str, message: str, history: list) -> str:
+    """Send the message to Hermes gateway and return the reply."""
+    client = _get_client()
+
     messages = [{"role": "system", "content": (
         "You are Joy AI, an assistant for a restaurant team. "
         "Help with operations, marketing, Instagram content, and automation. "
         "Be concise and practical."
     )}]
 
-    for h in history[-20:]:   # last 20 turns for context
+    for h in history[-20:]:
         role = "user" if h.get("role") == "me" else "assistant"
         messages.append({"role": role, "content": h.get("text", "")})
 
@@ -119,6 +116,7 @@ def call_model(model_id: str, message: str, history: list) -> str:
         temperature=0.7,
     )
     return response.choices[0].message.content
+
 
 if __name__ == "__main__":
     start_bot()
