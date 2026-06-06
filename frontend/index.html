@@ -188,15 +188,148 @@ header{
 }
 .exit-btn:hover{background:rgba(248,113,113,0.1);color:var(--red);}
 .exit-btn:active{background:rgba(248,113,113,0.2);}
-.theme-btn{
-  width:34px;height:34px;border-radius:50%;border:none;
-  background:transparent;color:var(--sub);font-size:15px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:background .15s,color .15s;flex:none;min-width:34px;min-height:34px;
-  line-height:1;
+
+/* ── iOS TOGGLE ── */
+.toggle{display:flex;align-items:center;cursor:pointer;flex:none;padding:4px;}
+.toggle input{position:absolute;opacity:0;width:0;height:0;}
+.toggle-track{
+  width:40px;height:22px;border-radius:11px;position:relative;
+  background:var(--glass2);border:1px solid var(--line2);
+  transition:background .22s,border-color .22s;
 }
-.theme-btn:hover{background:var(--ghost);color:var(--text);}
-.theme-btn:active{background:var(--glass);}
+.toggle input:checked + .toggle-track{background:var(--accent);border-color:var(--accent);}
+.toggle-thumb{
+  position:absolute;top:2px;left:2px;
+  width:16px;height:16px;border-radius:50%;
+  background:#fff;
+  box-shadow:0 1px 4px rgba(0,0,0,.35);
+  transition:transform .22s cubic-bezier(.34,1.26,.64,1);
+}
+.toggle input:checked + .toggle-track .toggle-thumb{transform:translateX(18px);}
+
+/* ── COMPOSER BUTTONS (mic + file) ── */
+.comp-btn{
+  width:42px;height:42px;border-radius:50%;border:1px solid var(--line);flex:none;cursor:pointer;
+  background:var(--glass);color:var(--sub);font-size:17px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s,color .15s,transform .1s,border-color .15s;
+  -webkit-appearance:none;
+}
+.comp-btn:hover{background:var(--glass2);color:var(--text);border-color:var(--line2);}
+.comp-btn:active{transform:scale(.90);}
+.comp-btn.recording{
+  background:var(--red);color:#fff;border-color:var(--red);
+  animation:recPulse 1s ease-in-out infinite;
+}
+@keyframes recPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,.4);}
+  50%{box-shadow:0 0 0 7px rgba(248,113,113,0);}
+}
+
+/* ── MODEL BAR (replaces quick chips) ── */
+.model-bar{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 14px;
+  background:var(--paper);border-top:1px solid var(--line);
+  flex:none;overflow-x:auto;scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+.model-bar::-webkit-scrollbar{display:none;}
+.mopt-group{display:flex;gap:5px;flex:1;min-width:0;}
+.mopt{
+  flex:none;display:flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:20px;
+  background:var(--glass);border:1px solid var(--line);
+  color:var(--sub);font-size:12px;font-family:inherit;cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s;
+  white-space:nowrap;-webkit-user-select:none;user-select:none;
+}
+.mopt:hover{border-color:var(--line2);color:var(--text);}
+.mopt.active{
+  background:var(--accent-bg);border-color:var(--accent);color:var(--text);
+}
+.mopt-tag{
+  font-family:'DM Mono','Courier New',monospace;
+  font-size:10px;color:var(--sub);letter-spacing:0.03em;
+  padding:1px 5px;border-radius:4px;background:var(--glass2);
+  white-space:nowrap;
+}
+.mopt.active .mopt-tag{background:rgba(200,132,90,0.15);color:var(--accent2);}
+.help-btn{
+  flex:none;display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:20px;
+  background:transparent;border:1px solid var(--line2);
+  color:var(--sub);font-size:12px;font-family:inherit;cursor:pointer;
+  transition:background .15s,color .15s;white-space:nowrap;
+  margin-left:auto;
+}
+.help-btn:hover{background:var(--ghost);color:var(--text);}
+.help-icon{
+  width:16px;height:16px;border-radius:50%;
+  background:var(--glass2);border:1px solid var(--line2);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:var(--sub);flex:none;
+}
+.help-txt{font-size:12px;font-family:'DM Mono',monospace;letter-spacing:0.01em;}
+
+/* ── HELP PANEL ── */
+.help-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  z-index:60;opacity:0;pointer-events:none;
+  transition:opacity .25s;
+}
+.help-overlay.show{opacity:1;pointer-events:auto;}
+.help-panel{
+  position:fixed;top:0;right:0;bottom:0;
+  width:min(420px,100vw);z-index:61;
+  background:var(--paper);border-left:1px solid var(--line);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+}
+.help-panel.open{transform:translateX(0);}
+.help-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:calc(16px + var(--sat)) 20px 14px;
+  border-bottom:1px solid var(--line);flex:none;
+}
+.help-head-title{font-size:15px;font-weight:600;letter-spacing:-0.02em;}
+.help-head-sub{font-size:11px;color:var(--sub);margin-top:2px;direction:rtl;font-family:Tahoma,sans-serif;}
+.help-close{
+  width:30px;height:30px;border-radius:50%;border:none;
+  background:var(--glass);color:var(--sub);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+  transition:background .15s,color .15s;
+}
+.help-close:hover{background:var(--glass2);color:var(--text);}
+.help-body{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:20px;scrollbar-width:thin;scrollbar-color:var(--glass2) transparent;}
+.help-section{display:flex;flex-direction:column;gap:8px;}
+.help-section h3{
+  font-size:11px;text-transform:uppercase;letter-spacing:1.4px;
+  color:var(--sub);font-weight:500;padding-bottom:4px;
+  border-bottom:1px solid var(--line);
+}
+.help-card{
+  background:var(--glass);border:1px solid var(--line);border-radius:var(--radius-sm);
+  padding:12px 14px;
+}
+.help-card-title{font-size:13px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+.help-card-tag{
+  font-family:'DM Mono',monospace;font-size:10px;
+  padding:2px 6px;border-radius:4px;
+  background:var(--accent-bg);color:var(--accent2);
+  border:1px solid rgba(200,132,90,0.2);
+}
+.help-card p{font-size:12px;color:var(--sub);line-height:1.6;}
+.help-card .fa{direction:rtl;font-family:Tahoma,sans-serif;font-size:12px;color:var(--sub);line-height:1.7;margin-top:4px;display:block;}
+.help-divider{height:1px;background:var(--line);margin:4px 0;}
+.help-tip{
+  background:var(--accent-bg);border:1px solid rgba(200,132,90,0.18);
+  border-radius:var(--radius-sm);padding:10px 14px;
+  font-size:12px;color:var(--accent2);line-height:1.6;
+}
+.help-tip .fa{direction:rtl;font-family:Tahoma,sans-serif;display:block;margin-top:4px;}
 
 /* ── CHAT ── */
 .chat-scroll{
@@ -458,7 +591,10 @@ select.field{cursor:pointer;appearance:none;}
       </div>
       <div class="hdr-right">
         <select class="model-pick" id="modelPick"></select>
-        <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">☀️</button>
+        <label class="toggle" title="Dark / Light">
+          <input type="checkbox" id="themeToggle" onchange="toggleTheme(this)">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
         <button class="exit-btn" onclick="logout()" aria-label="Log out">⏻</button>
       </div>
     </header>
@@ -470,11 +606,128 @@ select.field{cursor:pointer;appearance:none;}
       </div>
     </div>
 
-    <div class="quick" id="quick"></div>
+    <!-- ── MODEL BAR ── -->
+    <div class="model-bar">
+      <div class="mopt-group" id="moptGroup">
+        <button class="mopt active" data-model="deepseek-v4-pro" onclick="pickModel(this)">
+          <span class="mopt-tag">AvalAI</span>DeepSeek V4 Pro
+        </button>
+        <button class="mopt" data-model="nvidia1" onclick="pickModel(this)">
+          <span class="mopt-tag">Nv1</span>MiniMax M2.7
+        </button>
+        <button class="mopt" data-model="nvidia2" onclick="pickModel(this)">
+          <span class="mopt-tag">Nv2</span>MiniMax M2.7
+        </button>
+      </div>
+      <button class="help-btn" onclick="openHelp()">
+        <span class="help-icon">?</span>
+        <span class="help-txt">راهنما</span>
+      </button>
+    </div>
+
     <div class="composer">
+      <button class="comp-btn" id="micBtn" aria-label="Hold to record">🎤</button>
       <textarea id="input" rows="1" placeholder="Message Joy AI…"></textarea>
+      <label class="comp-btn" for="fileInput" title="Attach image or file">📎</label>
+      <input type="file" id="fileInput" accept="image/*,video/*,.pdf,.doc,.docx,.txt" style="display:none">
       <button class="send" onclick="sendMsg()">➤</button>
     </div>
+  </div>
+</div>
+
+<!-- ── HELP PANEL ── -->
+<div class="help-overlay" id="helpOverlay" onclick="closeHelp()"></div>
+<div class="help-panel" id="helpPanel">
+  <div class="help-head">
+    <div>
+      <div class="help-head-title">راهنما · Guide</div>
+      <div class="help-head-sub">Joy AI — آموزش استفاده</div>
+    </div>
+    <button class="help-close" onclick="closeHelp()">✕</button>
+  </div>
+  <div class="help-body">
+
+    <!-- MODELS -->
+    <div class="help-section">
+      <h3>Models · مدل‌ها</h3>
+
+      <div class="help-card">
+        <div class="help-card-title"><span class="help-card-tag">AvalAI</span>DeepSeek V4 Pro</div>
+        <p>Best for general tasks, coding, writing, long documents. 1M token context window. $1.74/$3.48 per 1M tokens.</p>
+        <span class="fa">بهترین برای وظایف عمومی، کدنویسی، نوشتن، و اسناد طولانی. پنجره ۱ میلیون توکن.</span>
+      </div>
+
+      <div class="help-card">
+        <div class="help-card-title"><span class="help-card-tag">Nv1</span>MiniMax M2.7</div>
+        <p>NVIDIA NIM hosted MiniMax M2.7. Good for creative tasks and multilingual content.</p>
+        <span class="fa">مدل MiniMax روی زیرساخت NVIDIA. مناسب وظایف خلاقانه و محتوای چندزبانه.</span>
+      </div>
+
+      <div class="help-card">
+        <div class="help-card-title"><span class="help-card-tag">Nv2</span>MiniMax M2.7</div>
+        <p>Second NVIDIA NIM endpoint. Use as fallback or for parallel tasks when Nv1 is busy.</p>
+        <span class="fa">اندپوینت دوم NVIDIA. به عنوان جایگزین یا برای وظایف موازی استفاده کنید.</span>
+      </div>
+    </div>
+
+    <!-- IMAGE GEN -->
+    <div class="help-section">
+      <h3>Image Generation · تولید تصویر</h3>
+
+      <div class="help-tip">
+        💡 To generate an image, describe what you want. Joy AI will call AvalAI's image endpoint automatically.
+        <span class="fa">برای ساخت تصویر، توضیح دهید چه می‌خواهید. Joy AI به‌طور خودکار با AvalAI تصویر می‌سازد.</span>
+      </div>
+
+      <div class="help-card">
+        <div class="help-card-title">🇮🇷 Persian Text in Images · متن فارسی در تصویر</div>
+        <p>For Persian/Arabic text inside images, always request <strong>qwen-image-2.0-pro</strong>. It has the best CJK/RTL text rendering.</p>
+        <span class="fa">برای نوشتن متن فارسی یا عربی داخل تصویر، حتماً مدل <strong>qwen-image-2.0-pro</strong> را درخواست کنید — بهترین کیفیت رندر متن RTL را دارد.</span>
+      </div>
+
+      <div class="help-card">
+        <div class="help-card-title">📸 Available Image Models</div>
+        <p><strong>qwen-image-2.0-pro</strong> — $0.06 — Persian/Arabic text, 2K resolution<br>
+        <strong>dall-e-3</strong> — $0.04 — Standard quality, reliable<br>
+        <strong>imagen-4.0-fast</strong> — $0.02 — Quick draft / cheap test<br>
+        <strong>flux-1.1-pro</strong> — $0.04 — Artistic, high detail<br>
+        <strong>seedream-5</strong> — $0.035 — Midjourney-style aesthetic<br>
+        <strong>gpt-image-2</strong> — token-based — Best quality (Tier 3)</p>
+        <span class="fa">مثال درخواست: «یک تصویر از رستوران با متن فارسی "جوی" با مدل qwen-image-2.0-pro بساز»</span>
+      </div>
+
+      <div class="help-card">
+        <div class="help-card-title">🎬 Video Generation · تولید ویدیو</div>
+        <p><strong>sora-2</strong> — $0.10/sec — Up to 20s<br>
+        <strong>gen4.5 (RunwayML)</strong> — $0.12/sec — Cinematic quality<br>
+        <strong>veo-3.1-fast</strong> — $0.15/sec — Native audio</p>
+        <span class="fa">تولید ویدیو async است — بعد از ارسال، نتیجه چند دقیقه بعد آماده می‌شود.</span>
+      </div>
+    </div>
+
+    <!-- TIPS -->
+    <div class="help-section">
+      <h3>Tips · نکات</h3>
+
+      <div class="help-card">
+        <div class="help-card-title">🎤 Voice Input · ورودی صوتی</div>
+        <p>Hold the mic button to record. Release to transcribe via Hermes STT (ElevenLabs Scribe v2).</p>
+        <span class="fa">دکمه میکروفون را نگه دارید تا ضبط شود. رها کنید تا به متن تبدیل شود.</span>
+      </div>
+
+      <div class="help-card">
+        <div class="help-card-title">📎 File & Image Attach</div>
+        <p>Click the paperclip to attach an image or file. Attach images directly for vision analysis.</p>
+        <span class="fa">روی گیره کاغذ کلیک کنید تا تصویر یا فایل پیوست کنید. تصاویر برای تحلیل بینایی ارسال می‌شوند.</span>
+      </div>
+
+      <div class="help-card">
+        <div class="help-card-title">⚡ Web Search · جستجوی وب</div>
+        <p>Joy AI can search the web via AvalAI Serper ($0.001/query). Just ask: "search for..."</p>
+        <span class="fa">Joy AI می‌تواند وب را جستجو کند. کافیست بگویید: «جستجو کن...» یا «سرچ کن...»</span>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -754,7 +1007,7 @@ async function enterApp(u) {
   document.getElementById("sbName").textContent   = `${info.name}  (@${u})`;
   document.getElementById("sbRole").textContent   = info.role;
   document.getElementById("sbAvatar").textContent = info.name[0];
-  buildQuick(info.role);
+  initModelBar();
   await loadModels();
   if (!cache.users[u].chats) cache.users[u].chats = [];
   renderHistory();
@@ -803,18 +1056,101 @@ async function loadModels() {
 }
 
 /* ════════════════════════════════
-   QUICK CHIPS
+   MODEL BAR
 ════════════════════════════════ */
-function buildQuick(role) {
-  const q = document.getElementById("quick");
-  q.innerHTML = "";
-  (QUICK[role] || []).forEach(t => {
-    const c = document.createElement("div");
-    c.className = "chip"; c.textContent = t;
-    c.onclick = () => { document.getElementById("input").value = t.replace(/^\S+\s/, ""); sendMsg(); };
-    q.appendChild(c);
+function initModelBar() {
+  const saved = cache.users[currentUser]?.model || 'deepseek-v4-pro';
+  activeModel = saved;
+  document.querySelectorAll('.mopt').forEach(b => {
+    b.classList.toggle('active', b.dataset.model === activeModel);
   });
+  const pick = document.getElementById('modelPick');
+  if (pick) {
+    pick.value = activeModel;
+    if (!pick.value) pick.selectedIndex = 0;
+  }
 }
+
+function pickModel(el) {
+  document.querySelectorAll('.mopt').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  activeModel = el.dataset.model;
+  if (currentUser) { cache.users[currentUser].model = activeModel; saveCache(); }
+  const pick = document.getElementById('modelPick');
+  if (pick) { pick.value = activeModel; }
+}
+
+/* ════════════════════════════════
+   HELP PANEL
+════════════════════════════════ */
+function openHelp() {
+  document.getElementById('helpPanel').classList.add('open');
+  document.getElementById('helpOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeHelp() {
+  document.getElementById('helpPanel').classList.remove('open');
+  document.getElementById('helpOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+/* ════════════════════════════════
+   MIC — HOLD TO RECORD
+════════════════════════════════ */
+let _mediaRec = null, _audioChunks = [];
+
+const micBtn = document.getElementById('micBtn');
+
+micBtn.addEventListener('pointerdown', async e => {
+  e.preventDefault();
+  if (!navigator.mediaDevices?.getUserMedia) {
+    botSay('⚠️ Microphone not supported in this browser.');
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    _audioChunks = [];
+    _mediaRec = new MediaRecorder(stream);
+    _mediaRec.ondataavailable = ev => { if (ev.data.size > 0) _audioChunks.push(ev.data); };
+    _mediaRec.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      const blob = new Blob(_audioChunks, {type:'audio/webm'});
+      // Show size as feedback; STT integration via Hermes when backend configured
+      const kb = (blob.size / 1024).toFixed(1);
+      const inp = document.getElementById('input');
+      inp.placeholder = `🎤 Recording ready (${kb} KB) — STT via Hermes coming soon`;
+      setTimeout(() => { inp.placeholder = 'Message Joy AI…'; }, 4000);
+    };
+    _mediaRec.start();
+    micBtn.classList.add('recording');
+  } catch(err) {
+    botSay('⚠️ Mic access denied — please allow microphone in browser settings.');
+  }
+});
+
+['pointerup','pointerleave','pointercancel'].forEach(ev =>
+  micBtn.addEventListener(ev, () => {
+    if (_mediaRec && _mediaRec.state === 'recording') {
+      _mediaRec.stop();
+      micBtn.classList.remove('recording');
+    }
+  })
+);
+
+/* ════════════════════════════════
+   FILE ATTACH
+════════════════════════════════ */
+document.getElementById('fileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const inp = document.getElementById('input');
+  const isImage = file.type.startsWith('image/');
+  inp.value = isImage
+    ? `[Image: ${file.name}] Describe this image`
+    : `[File: ${file.name}]`;
+  inp.focus();
+  e.target.value = '';
+});
 
 /* ════════════════════════════════
    CHAT
@@ -944,17 +1280,16 @@ window.visualViewport?.addEventListener("resize", scrollDown);
 ════════════════════════════════ */
 function applyTheme(t) {
   document.documentElement.setAttribute('data-theme', t);
-  const btn = document.getElementById('themeBtn');
-  if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+  const tog = document.getElementById('themeToggle');
+  if (tog) tog.checked = (t === 'light');
   localStorage.setItem('joy_theme', t);
 }
 
-function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme') || 'dark';
-  applyTheme(current === 'dark' ? 'light' : 'dark');
+function toggleTheme(el) {
+  applyTheme(el.checked ? 'light' : 'dark');
 }
 
-// Sync button icon with current theme on load
+// Sync toggle with current theme on load
 applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
 </script>
 </body>
