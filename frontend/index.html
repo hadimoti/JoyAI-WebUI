@@ -330,6 +330,18 @@ header{
   font-size:12px;color:var(--accent2);line-height:1.6;
 }
 .help-tip .fa{direction:rtl;font-family:Tahoma,sans-serif;display:block;margin-top:4px;}
+.tier-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;}
+.tier-table th{text-align:right;padding:5px 8px;color:var(--sub);font-weight:500;border-bottom:1px solid var(--line);direction:rtl;}
+.tier-table td{padding:5px 8px;border-bottom:1px solid var(--line);direction:rtl;font-family:Tahoma,sans-serif;color:var(--text);}
+.tier-table td:last-child,.tier-table th:last-child{font-family:'DM Mono',monospace;font-size:10px;text-align:left;direction:ltr;}
+.tier-table tr.current td{color:var(--accent2);background:var(--accent-bg);}
+.tier-badge{display:inline-block;padding:1px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:10px;border:1px solid var(--line2);background:var(--glass2);color:var(--sub);}
+.tier-badge.t3{background:var(--accent-bg);border-color:rgba(200,132,90,.3);color:var(--accent2);}
+.rl-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;}
+.rl-cell{background:var(--glass);border:1px solid var(--line);border-radius:var(--radius-sm);padding:8px 10px;}
+.rl-cell-label{font-size:10px;color:var(--sub);font-family:'DM Mono',monospace;letter-spacing:0.03em;}
+.rl-cell-val{font-size:12px;font-weight:600;color:var(--text);margin-top:2px;}
+.rl-cell-desc{font-size:11px;color:var(--sub);margin-top:1px;direction:rtl;font-family:Tahoma,sans-serif;}
 
 /* ── CHAT ── */
 .chat-scroll{
@@ -702,6 +714,71 @@ select.field{cursor:pointer;appearance:none;}
         <strong>gen4.5 (RunwayML)</strong> — $0.12/sec — Cinematic quality<br>
         <strong>veo-3.1-fast</strong> — $0.15/sec — Native audio</p>
         <span class="fa">تولید ویدیو async است — بعد از ارسال، نتیجه چند دقیقه بعد آماده می‌شود.</span>
+      </div>
+    </div>
+
+    <!-- RATE LIMITS -->
+    <div class="help-section">
+      <h3>Rate Limits · محدودیت‌های نرخ</h3>
+
+      <div class="help-tip">
+        <strong>وضعیت فعلی:</strong> <span class="tier-badge t3">Tier 3</span> — شارژ تجمعی $50+ · ارتقا خودکار و آنی است
+        <span class="fa">با رسیدن به آستانه هر سطح، بدون نیاز به تیکت پشتیبانی، سطح شما فوراً ارتقا می‌یابد.</span>
+      </div>
+
+      <div class="help-card">
+        <div class="help-card-title">📊 Tier 3 Model Limits</div>
+        <div class="rl-grid">
+          <div class="rl-cell">
+            <div class="rl-cell-label">DeepSeek V4 Pro</div>
+            <div class="rl-cell-val">500 RPM · 4M TPM</div>
+            <div class="rl-cell-desc">پنجره ۱M توکن</div>
+          </div>
+          <div class="rl-cell">
+            <div class="rl-cell-label">Claude Sonnet 4.6</div>
+            <div class="rl-cell-val">250 RPM · 800K TPM</div>
+            <div class="rl-cell-desc">پنجره ۱M توکن</div>
+          </div>
+          <div class="rl-cell">
+            <div class="rl-cell-label">DeepSeek V4 Flash</div>
+            <div class="rl-cell-val">1500 RPM · 4M TPM</div>
+            <div class="rl-cell-desc">پنجره ۶۴K توکن</div>
+          </div>
+          <div class="rl-cell">
+            <div class="rl-cell-label">Gemini Flash Lite</div>
+            <div class="rl-cell-val">500 RPM</div>
+            <div class="rl-cell-desc">پنجره ۱M توکن</div>
+          </div>
+        </div>
+        <p style="margin-top:8px;font-size:11px">RPM = درخواست در دقیقه · TPM = توکن در دقیقه</p>
+      </div>
+
+      <div class="help-card">
+        <div class="help-card-title">🪜 سطوح دسترسی AvalAI</div>
+        <table class="tier-table">
+          <tr><th>سطح</th><th>شرط</th></tr>
+          <tr><td>سطح پایه</td><td>ثبت‌نام با ایمیل + اعتبار ۲۵٬۰۰۰ ریال رایگان</td></tr>
+          <tr><td>سطح ۱</td><td>تأیید شماره تلفن (بدون نیاز به شارژ)</td></tr>
+          <tr><td>سطح ۲</td><td>شارژ تجمعی $10</td></tr>
+          <tr class="current"><td>سطح ۳ ✓</td><td>شارژ تجمعی $50 — وضعیت فعلی</td></tr>
+          <tr><td>سطح ۴</td><td>شارژ تجمعی $250</td></tr>
+          <tr><td>سطح ۵</td><td>شارژ تجمعی $1,000</td></tr>
+        </table>
+        <span class="fa" style="display:block;margin-top:8px;font-size:11px;color:var(--sub)">شارژها تجمعی محاسبه می‌شوند — موجودی فعلی مهم نیست، تاریخچه شارژ مهم است. هیچ اعتباری بابت ارتقا کسر نمی‌شود.</span>
+      </div>
+
+      <div class="help-card">
+        <div class="help-card-title">⚠️ خطای 429 — محدودیت نرخ</div>
+        <p>اگر پیام خطا دریافت کردید، چند ثانیه صبر کرده و دوباره امتحان کنید. هدر <code style="font-family:'DM Mono',monospace;font-size:10px;background:var(--glass2);padding:1px 4px;border-radius:3px">Retry-After</code> زمان دقیق انتظار را نشان می‌دهد.</p>
+        <span class="fa">خطای ۴۲۹ یعنی به محدودیت نرخ رسیده‌اید. ساده‌ترین راه: چند ثانیه صبر کرده و مجدداً ارسال کنید.</span>
+      </div>
+
+      <div class="help-card">
+        <div class="help-card-title">💡 نکات کاهش مصرف</div>
+        <p>• از <strong>DeepSeek Flash</strong> برای کارهای ساده و تکراری استفاده کنید (۱۵۰۰ RPM)<br>
+        • پیام‌های کوتاه‌تر = توکن کمتر = هزینه کمتر<br>
+        • برای جستجوی وب: serper-search فقط $0.001 هر query</p>
+        <span class="fa">برای کارهای حجیم از Flash استفاده کنید تا هم سریع‌تر باشد هم ارزان‌تر.</span>
       </div>
     </div>
 
