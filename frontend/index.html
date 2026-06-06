@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
@@ -7,7 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <title>Joy AI 🦊</title>
-<!-- v5 — premium redesign -->
+<!-- v6 — theme + desktop fixes -->
+<script>(function(){var t=localStorage.getItem('joy_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -36,6 +37,29 @@
   --sab:env(safe-area-inset-bottom,0px);
   --sal:env(safe-area-inset-left,0px);
 }
+
+/* ── LIGHT THEME ── */
+[data-theme="light"]{
+  --ink:#faf9f7;
+  --paper:#f3f2ef;
+  --lift:#eae9e5;
+  --glass:#e3e2de;
+  --glass2:#d8d7d3;
+  --line:rgba(0,0,0,0.08);
+  --line2:rgba(0,0,0,0.14);
+  --accent:#b36b40;
+  --accent2:#c8845a;
+  --accent-bg:rgba(179,107,64,0.10);
+  --text:#1a1916;
+  --sub:#8a8880;
+  --ghost:rgba(0,0,0,0.045);
+  --green:#16a34a;
+  --red:#dc2626;
+}
+[data-theme="light"] header{background:rgba(250,249,247,0.92);}
+[data-theme="light"] .chat-scroll{background:var(--ink);}
+[data-theme="light"] .overlay.show{background:rgba(0,0,0,0.45);}
+[data-theme="light"] .sidebar{box-shadow:none;}
 
 /* ── RESET ── */
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0;}
@@ -113,7 +137,7 @@ body{
 
 /* ── OVERLAY ── */
 .overlay{
-  position:fixed;inset:0;background:transparent;
+  position:fixed;inset:0;background:rgba(0,0,0,0.62);
   opacity:0;pointer-events:none;z-index:35;
   /* JS drives opacity for gesture tracking */
 }
@@ -164,6 +188,15 @@ header{
 }
 .exit-btn:hover{background:rgba(248,113,113,0.1);color:var(--red);}
 .exit-btn:active{background:rgba(248,113,113,0.2);}
+.theme-btn{
+  width:34px;height:34px;border-radius:50%;border:none;
+  background:transparent;color:var(--sub);font-size:15px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s,color .15s;flex:none;min-width:34px;min-height:34px;
+  line-height:1;
+}
+.theme-btn:hover{background:var(--ghost);color:var(--text);}
+.theme-btn:active{background:var(--glass);}
 
 /* ── CHAT ── */
 .chat-scroll{
@@ -313,6 +346,11 @@ select.field{cursor:pointer;appearance:none;}
   .hamb{display:none!important;}
   .swipe-edge{display:none;}
   .overlay{display:none!important;}
+  /* Sidebar always visible — override any inline JS transform */
+  .sidebar{transform:none!important;position:relative!important;box-shadow:none;}
+  /* Chat left-aligned — no artificial centering */
+  .chat-inner{max-width:100%;margin:0;}
+  .typing-wrap{max-width:100%;margin:0;}
 }
 
 /* ── MOBILE ── */
@@ -420,6 +458,7 @@ select.field{cursor:pointer;appearance:none;}
       </div>
       <div class="hdr-right">
         <select class="model-pick" id="modelPick"></select>
+        <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">☀️</button>
         <button class="exit-btn" onclick="logout()" aria-label="Log out">⏻</button>
       </div>
     </header>
@@ -899,6 +938,24 @@ inp.addEventListener("keydown", e => {
 
 /* keyboard pushes layout up on iOS — scroll to bottom */
 window.visualViewport?.addEventListener("resize", scrollDown);
+
+/* ════════════════════════════════
+   THEME TOGGLE
+════════════════════════════════ */
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  const btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('joy_theme', t);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+
+// Sync button icon with current theme on load
+applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
 </script>
 </body>
 </html>
