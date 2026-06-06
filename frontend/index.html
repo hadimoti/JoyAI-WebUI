@@ -135,16 +135,13 @@ width:100%;text-align:left;font-family:inherit;
 .ctx-item.ctx-remove i{color:var(--red);}
 .ctx-item.ctx-pin-active{color:var(--accent2);}
 .ctx-item.ctx-pin-active i{color:var(--accent2);}
-.ctx-color-row{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:8px;font-size:13px;}
-.ctx-color-row label{cursor:pointer;font-size:12px;color:var(--sub);display:flex;align-items:center;gap:8px;}
-.ctx-color-row input[type=color]{
-width:22px;height:22px;border:1px solid var(--line2);border-radius:6px;
-cursor:pointer;padding:0;background:transparent;
--webkit-appearance:none;appearance:none;
+.ctx-color-row{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:8px;}
+.ctx-dot{
+width:20px;height:20px;border-radius:50%;border:2px solid transparent;
+cursor:pointer;transition:transform .12s,border-color .15s;flex:none;
 }
-.ctx-color-row input[type=color]::-webkit-color-swatch-wrapper{padding:1px;}
-.ctx-color-row input[type=color]::-webkit-color-swatch{border:none;border-radius:4px;}
-.ctx-color-row input[type=color]::-moz-color-swatch{border:none;border-radius:4px;}
+.ctx-dot:hover{transform:scale(1.18);}
+.ctx-dot.sel{border-color:var(--text);transform:scale(1.1);}
 
 .side-footer{padding:12px;border-top:1px solid var(--line);}
 .logout-btn{
@@ -1437,7 +1434,11 @@ it.innerHTML = `
 <i class="fa fa-pencil"></i>Rename
 </button>
 <div class="ctx-color-row">
-<label><i class="fa fa-palette" style="width:16px;text-align:center;font-size:13px;color:var(--sub)"></i>Color <input type="color" value="${chatColor || defaultColor}" onchange="ctxColor(${idx},this.value)"></label>
+<span class="ctx-dot${chatColor==='#60a5fa'?' sel':''}" style="background:#60a5fa" onclick="ctxColor(${idx},'#60a5fa')"></span>
+<span class="ctx-dot${chatColor==='#c084fc'?' sel':''}" style="background:#c084fc" onclick="ctxColor(${idx},'#c084fc')"></span>
+<span class="ctx-dot${chatColor==='#4ade80'?' sel':''}" style="background:#4ade80" onclick="ctxColor(${idx},'#4ade80')"></span>
+<span class="ctx-dot${chatColor==='#facc15'?' sel':''}" style="background:#facc15" onclick="ctxColor(${idx},'#facc15')"></span>
+<span class="ctx-dot${chatColor==='#f87171'?' sel':''}" style="background:#f87171" onclick="ctxColor(${idx},'#f87171')"></span>
 </div>
 <button class="ctx-item ctx-remove" onclick="ctxRemove(${idx})">
 <i class="fa fa-trash-o"></i>Remove
