@@ -4,16 +4,17 @@ Routes all AI calls through the local Hermes gateway (OpenAI-compatible API serv
 
 Run:  python hermes_api.py
 """
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from openai import OpenAI
-import uvicorn
+import httpx, uvicorn, time
 
 from config import (
     HOST, PORT,
     AVAILABLE_MODELS, DEFAULT_MODEL,
     HERMES_API_URL, HERMES_API_KEY,
+    BOT_TOKEN, USERS,
 )
 import auth, store
 from telegram_bot import start_bot
@@ -29,6 +30,35 @@ app.add_middleware(
 
 # Single client pointing at local Hermes API server
 _hermes_client: OpenAI | None = None
+
+
+# ── GROUP CHAT WEBSOCKET MANAGER ─────────────────────────────
+
+class _GroupManager:
+    def __init__(self):
+        self._sockets: list[WebSocket] = []
+
+    async def connect(self, ws: WebSocket):
+        await ws.accept()
+        self._sockets.append(ws)
+
+    def disconnect(self, ws: WebSocket):
+        self._sockets.discard if hasattr(self._sockets, 'discard') else None
+        if ws in self._sockets:
+            self._sockets.remove(ws)
+
+    async def broadcast(self, data: dict):
+        dead = []
+        for ws in list(self._sockets):
+            try:
+                await ws.send_json(data)
+            except Exception:
+                dead.append(ws)
+        for ws in dead:
+            if ws in self._sockets:
+                self._sockets.remove(ws)
+
+_group = _GroupManager()
 
 def _get_client() -> OpenAI:
     global _hermes_client
@@ -116,6 +146,132 @@ def call_model(model_id: str, message: str, history: list) -> str:
         temperature=0.7,
     )
     return response.choices[0].message.content
+
+
+def call_model_group(model_id: str, message: str, sender_name: str, history: list) -> str:
+    """Group chat AI response — aware of all participants."""
+    client = _get_client()
+
+    names = ", ".join(u["name"] for u in USERS.values())
+    messages = [{"role": "system", "content": (
+        f"You are Joy AI, the shared team assistant for a restaurant group chat. "
+        f"Team members: {names}. "
+        "Anyone can message here and you reply to the whole group. "
+        "Identify who sent the message from the [Name]: prefix. "
+        "Help with restaurant operations, marketing, Instagram content, team coordination, and automation. "
+        "Be concise, warm, and practical."
+    )}]
+
+    for h in history[-40:]:
+        role = "user" if h.get("role") in ("user", "me") else "assistant"
+        if role == "user":
+            uinfo = USERS.get(h.get("user", ""), {})
+            name = uinfo.get("name", h.get("user", ""))
+            content = f"[{name}]: {h.get('text', '')}"
+        else:
+            content = h.get("text", "")
+        messages.append({"role": role, "content": content})
+
+    messages.append({"role": "user", "content": f"[{sender_name}]: {message}"})
+
+    response = client.chat.completions.create(
+        model=model_id,
+        messages=messages,
+        max_tokens=1024,
+        temperature=0.7,
+    )
+    return response.choices[0].message.content
+
+
+# ── GROUP CHAT ENDPOINTS ──────────────────────────────────────
+
+@app.websocket("/group-chat/ws")
+async def group_ws(websocket: WebSocket):
+    await _group.connect(websocket)
+    try:
+        while True:
+            await websocket.receive_text()   # keepalive pings from client
+    except WebSocketDisconnect:
+        _group.disconnect(websocket)
+
+@app.get("/group-chat/history")
+async def group_history():
+    return {"messages": store.load_group_chat()}
+
+@app.post("/group-chat/send")
+async def group_send(req: Request):
+    d = await req.json()
+    token = d.get("token")
+    if token not in store.tokens:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    user    = store.tokens[token]
+    message = (d.get("message") or "").strip()
+    model   = d.get("model", DEFAULT_MODEL)
+    if not message:
+        return JSONResponse({"error": "Empty message"})
+
+    sender_name = USERS.get(user, {}).get("name", user)
+    t_now = int(time.time() * 1000)
+
+    # Persist and broadcast user message
+    user_msg = {"role": "user", "user": user, "text": message, "t": t_now}
+    history  = store.append_group_message(user_msg)
+    await _group.broadcast({"type": "message", "msg": user_msg})
+
+    # AI reply
+    try:
+        reply = call_model_group(model, message, sender_name, history[:-1])
+    except Exception as e:
+        reply = f"⚠️ Model error: {e}"
+
+    ai_msg = {"role": "bot", "user": "joy_ai", "text": reply, "t": int(time.time() * 1000)}
+    store.append_group_message(ai_msg)
+    await _group.broadcast({"type": "message", "msg": ai_msg})
+
+    return {"ok": True}
+
+
+# ── TELEGRAM AVATAR ───────────────────────────────────────────
+
+@app.get("/tg/avatar/{user}")
+async def tg_avatar(user: str):
+    info = USERS.get(user)
+    if not info:
+        return JSONResponse({"error": "Unknown user"}, status_code=404)
+
+    cached = store.get_cached_avatar(user)
+    if cached is not None:           # None means "not cached", "" means "no photo"
+        return {"url": cached or None}
+
+    if not BOT_TOKEN:
+        store.set_cached_avatar(user, "")
+        return {"url": None}
+
+    tg_id = info["id"]
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            r = await client.get(
+                f"https://api.telegram.org/bot{BOT_TOKEN}/getUserProfilePhotos",
+                params={"user_id": tg_id, "limit": 1},
+            )
+            photos = r.json().get("result", {}).get("photos", [])
+            if not photos:
+                store.set_cached_avatar(user, "")
+                return {"url": None}
+
+            file_id = photos[0][-1]["file_id"]   # largest variant
+            fr = await client.get(
+                f"https://api.telegram.org/bot{BOT_TOKEN}/getFile",
+                params={"file_id": file_id},
+            )
+            file_path = fr.json()["result"]["file_path"]
+            url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_path}"
+            store.set_cached_avatar(user, url)
+            return {"url": url}
+    except Exception as e:
+        store.set_cached_avatar(user, "")
+        return {"url": None, "error": str(e)}
 
 
 if __name__ == "__main__":
