@@ -6,7 +6,7 @@ Responsive phone WebUI + Hermes backend. Gmail/Telegram verification, single **d
 
 | Name   | Username      | Role            |
 |--------|---------------|-----------------|
-| Hadi   | @persiareborn | Creator · Admin |
+| Hadi   | @hadimoti     | Creator · Admin |
 | Yoones | @yoonesbz     | JOY Manager     |
 | Nadia  | @naad_ya      | JOY Manager     |
 | Zohre  | @fatemi9696   | JOY Artist      |
@@ -25,9 +25,11 @@ Open `frontend/index.html` in your browser.
 ```bash
 cd backend
 pip install -r requirements.txt
-cp .env.example .env      # fill BOT_TOKEN + Gmail SMTP
+cp .env.example .env      # fill BOT_TOKEN, Gmail SMTP, HERMES_API_KEY
 python hermes_api.py
 ```
+
+**Requires Hermes desktop (or `hermes gateway`) running on port 8642.**
 
 Then in `frontend/index.html` set:
 
@@ -45,9 +47,18 @@ const HERMES_API = "http://YOUR-PC-IP:8000";
 
 ## Models
 
-- WebUI dropdown, CLI: `hermes model`, Telegram: `/model` → all return **default**.
-- Models fetched once then cached with user + histories.
+All models route through the local **Hermes gateway** → AvalAI:
 
-## Plug Your AI
+| ID | Name |
+|----|------|
+| `deepseek-v4-pro` | Joy AI Pro (default) |
+| `deepseek-v4-flash` | Joy AI Flash |
+| `claude-sonnet-4-6` | Claude Sonnet |
+| `gemini-3.1-flash-lite-preview` | Gemini Flash Lite |
+| `qwen3.6-flash` | Qwen Flash (Persian) |
 
-Edit `run_default_model()` in `backend/hermes_api.py`.
+## Architecture
+
+```
+Browser → JoyAI backend (port 8000) → Hermes gateway (port 8642) → AvalAI
+```
