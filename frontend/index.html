@@ -729,10 +729,10 @@ box-shadow:8px 0 32px rgba(0,0,0,.55);
 <div class="screen hidden" id="scTg">
 <div class="fox-anim" style="width:60px;height:60px"><svg viewBox="0 0 100 100" class="foxClone"></svg></div>
 <h1>Telegram verify</h1>
-<p>Send this code to <b>@differentjoy_bot</b>:</p>
-<div class="code-box" id="tgCode">······</div>
-<div class="note warn persian">این کد را برای هرمس در تلگرام بفرستید</div>
-<button class="btn btn-tg" onclick="openTgBot()">Open @differentjoy_bot ↗</button>
+<p>We sent a code to your Telegram. Enter it below:</p>
+<div class="note warn persian" style="margin-bottom:12px">کد تأیید به تلگرام شما ارسال شد</div>
+<input id="tgCodeInput" class="input" type="text" placeholder="JOY-XXXX" maxlength="8" autocomplete="off" style="text-align:center;letter-spacing:3px;font-size:1.2rem" onkeydown="if(event.key==='Enter')verifyTelegram()">
+<button class="btn btn-tg" onclick="verifyTelegram()">Verify ✓</button>
 <div id="tgMsg"></div>
 <button class="btn btn-ghost" onclick="show('scMethod')">← Back</button>
 </div>
@@ -1022,8 +1022,10 @@ New Chat
 /* ════════════════════════════════
 CONFIG
 ════════════════════════════════ */
-const HERMES_API = "http://localhost:8000";
-const DEMO_MODE = true;
+// ↓ Change this to your Cloudflare Tunnel or ngrok URL each session
+// Example: "https://joy-hadi.trycloudflare.com"
+const HERMES_API = "";
+const DEMO_MODE = false; // true = anyone can login with code "123456" — keep false in production
 
 const USERS = {
 "hadimoti": {id:"68238523", name:"Hadi", role:"Creator · Admin"},
@@ -1235,32 +1237,40 @@ d.ok ? onVerified("email", d.token) : (msg.innerHTML = `<div class="note err">In
 
 async function startTelegram() {
 show("scTg");
-const box = document.getElementById("tgCode");
+const inp = document.getElementById("tgCodeInput");
 const msg = document.getElementById("tgMsg");
-msg.innerHTML = `<div class="note warn">Generating code…</div>`;
-let code;
+inp.value = "";
+msg.innerHTML = `<div class="note warn">Sending code to your Telegram…</div>`;
 if (DEMO_MODE) {
-code = "JOY-" + Math.floor(1000 + Math.random() * 9000);
-} else {
+msg.innerHTML = `<div class="note warn">DEMO: enter any code</div>`;
+return;
+}
 try {
 const r = await fetch(`${HERMES_API}/auth/telegram/code`,
 {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({user:pendingUser})});
-code = (await r.json()).code;
-} catch(e) { msg.innerHTML = `<div class="note err">Connection error</div>`; return; }
+const d = await r.json();
+if (d.sent) {
+msg.innerHTML = `<div class="note ok">Code sent! Check Telegram 📲</div>`;
+inp.focus();
+} else {
+msg.innerHTML = `<div class="note err">Failed to send — check bot token config</div>`;
 }
-box.textContent = code;
-msg.innerHTML = `<div class="note warn">Waiting for Telegram confirmation…</div>`;
-tgPoll = setInterval(async () => {
-if (DEMO_MODE) { clearInterval(tgPoll); onVerified("telegram"); return; }
+} catch(e) { msg.innerHTML = `<div class="note err">Connection error</div>`; }
+}
+
+async function verifyTelegram() {
+const inp = document.getElementById("tgCodeInput");
+const msg = document.getElementById("tgMsg");
+const code = inp.value.trim().toUpperCase();
+if (!code) { msg.innerHTML = `<div class="note err">Enter the code first</div>`; return; }
+if (DEMO_MODE) { onVerified("telegram"); return; }
 try {
 const r = await fetch(`${HERMES_API}/auth/telegram/check?user=${pendingUser}&code=${code}`);
 const d = await r.json();
-if (d.ok) { clearInterval(tgPoll); onVerified("telegram", d.token); }
-} catch(e) {}
-}, 2500);
+if (d.ok) { onVerified("telegram", d.token); }
+else { msg.innerHTML = `<div class="note err">Wrong or expired code. Try again.</div>`; }
+} catch(e) { msg.innerHTML = `<div class="note err">Connection error</div>`; }
 }
-
-function openTgBot() { window.open(`https://t.me/${BOT_USERNAME}`, "_blank"); }
 
 function onVerified(method, token) {
 const u = pendingUser;

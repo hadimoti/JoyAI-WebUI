@@ -1,7 +1,7 @@
 """Email + Telegram verification logic."""
-import smtplib, time
+import smtplib, time, requests as _req
 from email.mime.text import MIMEText
-from config import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
+from config import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, BOT_TOKEN, USERS
 import store
 
 CODE_TTL = 300  # seconds
@@ -43,13 +43,33 @@ def verify_email(user, code):
         return {"ok": True, "token": store.new_token(user)}
     return {"ok": False}
 
+def _send_telegram(tg_id: str, text: str) -> bool:
+    try:
+        _req.post(
+            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+            json={"chat_id": tg_id, "text": text},
+            timeout=10,
+        )
+        return True
+    except Exception as e:
+        print("Telegram send error:", e)
+        return False
+
 def request_telegram_code(user):
+    info = USERS.get(user)
+    if not info:
+        return {"sent": False}
     code = store.gen_telegram_code()
-    store.telegram_codes[user] = {"code": code, "verified": False}
-    return {"code": code}
+    store.telegram_codes[user] = {"code": code, "exp": time.time() + CODE_TTL}
+    ok = _send_telegram(
+        info["id"],
+        f"🦊 Joy AI\nVerification code: {code}\n\nکد تأیید جوی ای: {code}\n\n(expires in 5 min)"
+    )
+    return {"sent": ok}
 
 def check_telegram(user, code):
     rec = store.telegram_codes.get(user)
-    if rec and rec["code"] == code and rec["verified"]:
+    if rec and rec.get("exp", 0) > time.time() and rec["code"] == code:
+        del store.telegram_codes[user]
         return {"ok": True, "token": store.new_token(user)}
     return {"ok": False}

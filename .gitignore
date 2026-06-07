@@ -20,3 +20,20 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Launcher — never commit user config or built artifacts
+launcher/config.json
+launcher/wt_pid.txt
+launcher/tunnel_url.txt
+launcher/joyai.log
+launcher/joyai_error.log
+launcher/dist/
+launcher/build/
+launcher/__pycache__/
+launcher/*.spec
+
+# Generated runtime files
+backend/tunnel_url.txt
+backend/wt_pid.txt
+backend/joyai.log
+backend/joyai_error.log

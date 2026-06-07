@@ -7,8 +7,9 @@ Run:  python hermes_api.py
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from openai import OpenAI
-import httpx, uvicorn, time
+import httpx, uvicorn, time, os
 
 from config import (
     HOST, PORT,
@@ -17,7 +18,6 @@ from config import (
     BOT_TOKEN, USERS,
 )
 import auth, store
-from telegram_bot import start_bot
 
 app = FastAPI(title="Joy AI — Hermes Gateway")
 
@@ -27,6 +27,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+_FRONTEND = os.path.join(os.path.dirname(__file__), "..", "frontend")
 
 # Single client pointing at local Hermes API server
 _hermes_client: OpenAI | None = None
@@ -101,6 +103,15 @@ async def models():
 @app.get("/health")
 async def health():
     return {"status": "ok", "gateway": HERMES_API_URL}
+
+# ---------- TUNNEL URL ----------
+@app.get("/live-url")
+async def live_url():
+    url_file = os.path.join(os.path.dirname(__file__), "tunnel_url.txt")
+    if os.path.exists(url_file):
+        with open(url_file) as f:
+            return {"url": f.read().strip()}
+    return {"url": None}
 
 # ---------- CHAT ----------
 @app.post("/chat")
@@ -274,6 +285,8 @@ async def tg_avatar(user: str):
         return {"url": None, "error": str(e)}
 
 
+# Serve frontend — must be last so API routes take priority
+app.mount("/", StaticFiles(directory=_FRONTEND, html=True), name="static")
+
 if __name__ == "__main__":
-    start_bot()
     uvicorn.run(app, host=HOST, port=PORT)
