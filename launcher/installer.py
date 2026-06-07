@@ -20,11 +20,11 @@ DEFAULTS = {
     "install_dir":       INSTALL_DIR,
 }
 
-BG   = "#1a1a2e"
-BG2  = "#16213e"
-ACC  = "#FF6B35"
+BG   = "#2b2b2b"
+BG2  = "#222222"
+ACC  = "#FF8000"
 FG   = "#e0e0e0"
-FG2  = "#888888"
+FG2  = "#999999"
 GRN  = "#00CC66"
 RED  = "#CC3333"
 
@@ -50,8 +50,9 @@ class Wizard:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("JoyAI Manager — Setup")
-        self.root.geometry("560x500")
-        self.root.resizable(False, False)
+        self.root.geometry("560x580")
+        self.root.minsize(560, 520)
+        self.root.resizable(True, True)
         self.root.configure(bg=BG)
         self._set_icon()
 
@@ -96,9 +97,20 @@ class Wizard:
         style.theme_use("clam")
         style.configure("TProgressbar", background=ACC, troughcolor=BG2, thickness=4)
 
-        # Content
-        self.content = tk.Frame(self.root, bg=BG)
-        self.content.pack(fill="both", expand=True, padx=28, pady=16)
+        # Scrollable content area
+        self._canvas = tk.Canvas(self.root, bg=BG, highlightthickness=0)
+        self._sb     = ttk.Scrollbar(self.root, orient="vertical",
+                                     command=self._canvas.yview)
+        self._canvas.configure(yscrollcommand=self._sb.set)
+        self._sb.pack(side="right", fill="y")
+        self._canvas.pack(fill="both", expand=True)
+        self.content = tk.Frame(self._canvas, bg=BG)
+        self._cwin = self._canvas.create_window(
+            (0, 0), window=self.content, anchor="nw")
+        self.content.bind("<Configure>", self._on_content_resize)
+        self._canvas.bind("<Configure>", self._on_canvas_resize)
+        self._canvas.bind_all("<MouseWheel>",
+            lambda e: self._canvas.yview_scroll(-1*(e.delta//120), "units"))
 
         # Footer buttons
         foot = tk.Frame(self.root, bg=BG2, height=52)
@@ -109,9 +121,16 @@ class Wizard:
         self.btn_next = styled_btn(foot, "Next →", self._next, accent=True)
         self.btn_next.pack(side="right", padx=14, pady=10)
 
+    def _on_content_resize(self, e):
+        self._canvas.configure(scrollregion=self._canvas.bbox("all"))
+
+    def _on_canvas_resize(self, e):
+        self._canvas.itemconfig(self._cwin, width=e.width - 4)
+
     def _clear(self):
         for w in self.content.winfo_children():
             w.destroy()
+        self._canvas.yview_moveto(0)
 
     def _h(self, text, size=11, color=ACC):
         tk.Label(self.content, text=text, font=("Segoe UI", size, "bold"),
@@ -302,18 +321,28 @@ class Wizard:
 
     def _make_shortcut(self, idir):
         try:
-            desktop  = os.path.join(os.path.expanduser("~"), "Desktop")
-            lnk      = os.path.join(desktop, "JoyAI Manager.lnk")
-            target   = os.path.join(idir, "joyai.py")
-            icon_path = os.path.join(idir, "assets", "logo.png")
-            ps = (
-                f'$s=(New-Object -COM WScript.Shell).CreateShortcut("{lnk}");'
-                f'$s.TargetPath="pythonw.exe";'
-                f'$s.Arguments=\\"{target}\\";'
-                f'$s.WorkingDirectory="{idir}";'
-                f'$s.Save()'
-            )
-            subprocess.run(["powershell","-Command",ps], capture_output=True)
+            ico_path = os.path.join(idir, "assets", "logo.ico")
+            png_path = os.path.join(idir, "assets", "logo.png")
+            if not os.path.exists(ico_path) and os.path.exists(png_path):
+                from PIL import Image
+                img = Image.open(png_path)
+                img.save(ico_path, format="ICO",
+                         sizes=[(16,16),(32,32),(48,48),(64,64),(256,256)])
+
+            desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+            lnk     = os.path.join(desktop, "JoyAI Manager.lnk")
+            target  = os.path.join(idir, "joyai.py")
+            icon    = ico_path if os.path.exists(ico_path) else ""
+
+            ps = "\n".join([
+                '$s=(New-Object -COM WScript.Shell).CreateShortcut(' + f'"{lnk}")',
+                '$s.TargetPath="pythonw.exe"',
+                f'$s.Arguments=\'"{target}"\'',
+                f'$s.WorkingDirectory="{idir}"',
+                f'$s.IconLocation="{icon},0"' if icon else "",
+                '$s.Save()',
+            ])
+            subprocess.run(["powershell","-Command", ps], capture_output=True)
             self._ilog("  ✓ Desktop shortcut created")
         except Exception as e:
             self._ilog(f"  (shortcut skipped: {e})")

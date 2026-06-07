@@ -11,9 +11,10 @@ APP_DIR     = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(APP_DIR, "config.json")
 
 def load_config():
-    if os.path.exists(CONFIG_PATH):
-        with open(CONFIG_PATH) as f:
-            return json.load(f)
+    for path in (CONFIG_PATH, os.path.join(APP_DIR, "config.json")):
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as f:
+                return json.load(f)
     return {}
 
 def save_config(cfg):
@@ -38,13 +39,16 @@ YLW  = "#FFAA00"
 
 def make_tray_icon(color=ACC):
     try:
-        img = Image.open(os.path.join(APP_DIR,"assets","logo.png")).resize((64,64))
-        return img
+        for name in ("logo.ico", "logo.png"):
+            p = os.path.join(APP_DIR, "assets", name)
+            if os.path.exists(p):
+                return Image.open(p).resize((64,64)).convert("RGBA")
     except Exception:
-        img = Image.new("RGBA",(64,64),(0,0,0,0))
-        d   = ImageDraw.Draw(img)
-        d.ellipse([2,2,62,62], fill=color)
-        return img
+        pass
+    img = Image.new("RGBA",(64,64),(0,0,0,0))
+    d   = ImageDraw.Draw(img)
+    d.ellipse([2,2,62,62], fill=color)
+    return img
 
 # ── Service manager ───────────────────────────────────────────────────────────
 
@@ -62,7 +66,8 @@ class Services:
         p1 = subprocess.Popen(
             ["hermes","gateway","run"],
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-            text=True, cwd=hermes_dir if os.path.isdir(hermes_dir) else None
+            encoding="utf-8", errors="replace",
+            cwd=hermes_dir if os.path.isdir(hermes_dir) else None
         )
         self._procs["hermes"] = p1
         threading.Thread(target=self._pipe, args=(p1,"hermes"), daemon=True).start()
@@ -73,7 +78,8 @@ class Services:
         p2 = subprocess.Popen(
             [sys.executable, "hermes_api.py"],
             cwd=bdir,
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            encoding="utf-8", errors="replace"
         )
         self._procs["backend"] = p2
         threading.Thread(target=self._pipe, args=(p2,"backend"), daemon=True).start()
@@ -85,7 +91,8 @@ class Services:
         p3 = subprocess.Popen(
             f'"{cf}" tunnel --url http://localhost:8000 2>&1 | "{sys.executable}" -u "{push}"',
             shell=True,
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            encoding="utf-8", errors="replace"
         )
         self._procs["tunnel"] = p3
         threading.Thread(target=self._pipe, args=(p3,"tunnel"), daemon=True).start()
