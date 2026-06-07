@@ -285,6 +285,41 @@ async def tg_avatar(user: str):
         return {"url": None, "error": str(e)}
 
 
+# ── OPENAI-COMPATIBLE PROXY (for admin panel / external clients) ──────────────
+
+@app.get("/v1/models")
+async def v1_models():
+    """OpenAI-compatible models list — lets admin panel check connection."""
+    return {
+        "object": "list",
+        "data": [
+            {"id": m["id"], "object": "model", "created": 0, "owned_by": "joy-ai"}
+            for m in AVAILABLE_MODELS
+        ],
+    }
+
+
+@app.post("/v1/chat/completions")
+async def v1_chat_completions(req: Request):
+    """OpenAI-compatible chat completions proxy — forwards directly to Hermes."""
+    d = await req.json()
+    try:
+        client = _get_client()
+        response = client.chat.completions.create(
+            model=d.get("model", DEFAULT_MODEL),
+            messages=d.get("messages", []),
+            max_tokens=d.get("max_tokens", 1024),
+            temperature=d.get("temperature", 0.7),
+            stream=False,
+        )
+        return JSONResponse(response.model_dump())
+    except Exception as e:
+        return JSONResponse(
+            {"error": {"message": str(e), "type": "api_error", "code": 500}},
+            status_code=500,
+        )
+
+
 # Serve frontend — must be last so API routes take priority
 app.mount("/", StaticFiles(directory=_FRONTEND, html=True), name="static")
 
