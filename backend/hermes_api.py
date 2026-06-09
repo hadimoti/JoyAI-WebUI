@@ -93,6 +93,17 @@ async def tg_code(req: Request):
 async def tg_check(user: str, code: str):
     return auth.check_telegram(user, code)
 
+# ---------- AUTH: SMS ----------
+@app.post("/auth/sms/request")
+async def sms_request(req: Request):
+    d = await req.json()
+    return auth.request_sms(d["user"])
+
+@app.post("/auth/sms/verify")
+async def sms_verify(req: Request):
+    d = await req.json()
+    return auth.verify_sms(d["user"], d["code"])
+
 # ---------- MODELS ----------
 @app.get("/models")
 async def models():

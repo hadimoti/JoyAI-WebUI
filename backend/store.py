@@ -7,6 +7,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 # In-memory stores (reset on restart — fine for verification codes)
 email_codes    = {}   # user -> {"code": "123456", "email": "..", "exp": ts}
 telegram_codes = {}   # user -> {"code": "JOY-1234", "verified": False}
+sms_codes      = {}   # user -> {"code": "123456", "exp": ts}
 tokens         = {}   # token -> user
 
 # Telegram avatar cache (in-memory, 5-min TTL)
@@ -45,6 +46,9 @@ def gen_email_code():
 
 def gen_telegram_code():
     return f"JOY-{secrets.randbelow(9000) + 1000}"
+
+def gen_sms_code():
+    return f"{secrets.randbelow(900000) + 100000}"
 
 
 # ── GROUP CHAT ──────────────────────────────────────────────

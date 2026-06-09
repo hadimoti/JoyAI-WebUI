@@ -89,7 +89,7 @@ class Services:
         cf   = CFG.get("cloudflared_path", "cloudflared")
         push = os.path.join(APP_DIR, "push_url.py")
         p3 = subprocess.Popen(
-            f'"{cf}" tunnel --url http://localhost:8000 2>&1 | "{sys.executable}" -u "{push}"',
+            f'"{cf}" tunnel --url http://localhost:8080 2>&1 | "{sys.executable}" -u "{push}"',
             shell=True,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
             encoding="utf-8", errors="replace"
@@ -315,7 +315,7 @@ class JoyAIApp:
         self._set_dots(FG2)
 
     def _open_browser(self):
-        webbrowser.open("http://localhost:8000")
+        webbrowser.open("http://localhost:8080")
 
     def _open_logfile(self):
         log = os.path.join(APP_DIR,"joyai.log")
